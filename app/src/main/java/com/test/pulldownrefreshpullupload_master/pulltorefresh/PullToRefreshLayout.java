@@ -2,12 +2,18 @@ package com.test.pulldownrefreshpullupload_master.pulltorefresh;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.test.pulldownrefreshpullupload_master.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,7 +62,7 @@ public class PullToRefreshLayout extends RelativeLayout {
     private View pullView; // 下拉的箭头
     private View refreshingView; // 正在刷新的图标
     private View refreshStateImageView; // 刷新结果图标
-    private View refreshStateTextView; // 刷新结果：成功或失败
+    private TextView refreshStateTextView; // 刷新结果：成功或失败
 
     private View loadMoreView; // 上拉头
     private View pullUpView; // 上拉的箭头
@@ -73,6 +79,14 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     private Context mContext;
 
+    //执行自动回滚的handler
+    Handler updateHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
+
     public PullToRefreshLayout(Context context) {
         this(context, null);
     }
@@ -88,6 +102,11 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     private void initView(Context context) {
         mContext = context;
+        timer = new MyTimer(updateHandler);
+        rotateAnimation = (RotateAnimation) AnimationUtils.loadAnimation(context, R.anim.reverse_anim);
+        refreshingAnimation = (RotateAnimation) AnimationUtils.loadAnimation(context, R.anim.rotating);
+        rotateAnimation.setInterpolator(new LinearInterpolator());
+        refreshingAnimation.setInterpolator(new LinearInterpolator());
     }
 
     @Override
@@ -97,7 +116,108 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+        if (!isFirstLayout) {
+            refreshingView = getChildAt(0);
+            pullableView = getChildAt(1);
+            loadMoreView = getChildAt(2);
+            isFirstLayout = true;
+            initView();
+            refreshDist = ((ViewGroup) refreshView).getChildAt(0).getMeasuredHeight();
+            loadMoreDist = ((ViewGroup) loadMoreView).getChildAt(0).getMeasuredHeight();
+        }
+
+        refreshView.layout(0, (int)(pullDownY + pullUpY) - refreshView.getMeasuredHeight(),
+                refreshView.getMeasuredWidth(), (int)(pullDownY + pullUpY));
+        pullableView.layout(0, (int)(pullDownY + pullUpY), pullableView.getMeasuredWidth(),
+                (int)(pullDownY + pullUpY));
+        loadMoreView.layout(0, (int)(pullDownY + pullUpY) + pullableView.getMeasuredHeight(),
+                loadMoreView.getMeasuredWidth(), (int)(pullDownY + pullUpY)
+                        + pullableView.getMeasuredHeight() + loadMoreView.getMeasuredHeight());
+    }
+
+    private void initView() {
+
+        pullView = refreshView.findViewById(R.id.pull_icon);
+        refreshStateTextView = refreshView.findViewById(R.id.state_tv);
+        refreshingView = refreshView.findViewById(R.id.refreshing_icon);
+        refreshStateImageView = refreshView.findViewById(R.id.state_iv);
+
+        pullUpView = loadMoreView.findViewById(R.id.pull_up_icon);
+        loadStateTextView = loadMoreView.findViewById(R.id.load_state_tv);
+        loadingView = loadMoreView.findViewById(R.id.loading_icon);
+        loadStateImageView = loadMoreView.findViewById(R.id.load_state_iv);
+    }
+
+    public void refreshFinish(int result) {
+        refreshView.clearAnimation();
+        refreshView.setVisibility(View.GONE);
+        switch (result) {
+            case SUCCEED:
+                refreshStateImageView.setVisibility(View.VISIBLE);
+                refreshStateTextView.setText(R.string.refresh_succeed);
+                refreshStateImageView.setBackgroundResource(R.drawable.refresh_succeed);
+                break;
+            case FAILED:
+                refreshStateImageView.setVisibility(View.VISIBLE);
+                refreshStateTextView.setText(R.string.refresh_failed);
+                refreshStateImageView.setBackgroundResource(R.drawable.refresh_failed);
+                break;
+            default:
+        }
+
+        if (pullDownY > 0) {
+            new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    changeState(DONE);
+                    hide();
+                }
+            }.sendEmptyMessageDelayed(0, 1000);
+        } else {
+            changeState(DONE);
+            hide();
+        }
+    }
+
+    private void hide() {
+        timer.schedule(5);
+    }
+
+    private void changeState(int to) {
+        state = to;
+        switch (state) {
+            case INIT:
+                refreshStateImageView.setVisibility(View.GONE);
+                refreshStateTextView.setText(R.string.pull_to_refresh);
+                pullView.clearAnimation();
+                pullView.setVisibility(View.VISIBLE);
+
+                loadStateImageView.setVisibility(View.GONE);
+                loadStateTextView.setText(R.string.pull_up_to_load);
+                pullUpView.clearAnimation();
+                pullUpView.setVisibility(View.VISIBLE);
+                break;
+            case REFRESHING:
+                pullView.clearAnimation();
+                refreshingView.setVisibility(View.VISIBLE);
+                pullView.setVisibility(View.INVISIBLE);
+                refreshingView.startAnimation(refreshingAnimation);
+                refreshStateTextView.setText(R.string.refreshing);
+                break;
+            case RELEASE_TO_LOAD:
+                refreshStateTextView.setText(R.string.release_to_refresh);
+                pullView.startAnimation(rotateAnimation);
+                break;
+            case LOADING:
+                pullUpView.clearAnimation();
+                loadingView.setVisibility(View.VISIBLE);
+                pullUpView.setVisibility(View.INVISIBLE);
+                loadingView.startAnimation(refreshingAnimation);
+                loadStateTextView.setText(R.string.loading);
+                break;
+            case DONE:
+                break;
+        }
     }
 
     public void setOnRefreshListener(OnRefreshListener listener) {
