@@ -14,6 +14,16 @@
         android:divider="@color/gray"
         android:dividerHeight="1dp"/>
 
+    <include
+        android:id="@+id/ll_loading"
+        layout="@layout/include_loading"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/ll_load_fail"
+        layout="@layout/include_load_fail"
+        android:visibility="gone" />
+
     <include layout="@layout/load_more" />
 
 </com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout>

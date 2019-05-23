@@ -6,6 +6,9 @@ import android.widget.ListView;
 
 public class PullableListView extends ListView implements Pullable {
 
+    private boolean mIsLoading = false;
+    private OnLoadListener mListener;
+
     public PullableListView(Context context) {
         this(context, null);
     }
@@ -43,5 +46,24 @@ public class PullableListView extends ListView implements Pullable {
             return true;
         }
             return false;
+    }
+
+    public void setOnLoadListener(OnLoadListener listener) {
+        mListener = listener;
+    }
+
+    private void onLoad() {
+        mIsLoading = true;
+        if (mListener != null) {
+            mListener.onLoad();
+        }
+    }
+
+    public void onLoadComplete() {
+        mIsLoading = false;
+    }
+
+    public interface OnLoadListener {
+        void onLoad();
     }
 }
