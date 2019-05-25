@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.test.pulldownrefreshpullupload_master.R;
+import com.test.pulldownrefreshpullupload_master.adapter.SheetAdapter;
+import com.test.pulldownrefreshpullupload_master.application.AppCache;
 import com.test.pulldownrefreshpullupload_master.model.SheetInfo;
 
 import java.util.List;
@@ -32,6 +34,20 @@ public class SheetListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mSongLists = AppCache.getInstance().getShellList();
+        if (mSongLists.isEmpty()) {
+            String[] titles = getResources().getStringArray(R.array.online_music_list_title);
+            String[] types = getResources().getStringArray(R.array.online_music_list_type);
+            for (int i = 0; i < titles.length; i++) {
+                SheetInfo info = new SheetInfo();
+                info.setTitle(titles[i]);
+                info.setType(types[i]);
+                mSongLists.add(info);
+            }
+        }
+        SheetAdapter adapter = new SheetAdapter(mSongLists);
+        lvPlaylist.setAdapter(adapter);
     }
 
     @Override
