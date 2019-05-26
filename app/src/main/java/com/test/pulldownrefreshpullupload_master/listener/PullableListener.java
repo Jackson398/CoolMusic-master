@@ -15,7 +15,7 @@ public class PullableListener implements PullToRefreshLayout.OnPullableListener 
                 refreshPullableList();
                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
             }
-        }.sendEmptyMessageDelayed(0, 5000);
+        }.sendEmptyMessageDelayed(0, 3000);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class PullableListener implements PullToRefreshLayout.OnPullableListener 
                 loadPullableList();
                 pullToRefreshLayout.loadMoreFinish(PullToRefreshLayout.SUCCEED);
             }
-        }.sendEmptyMessageDelayed(0, 5000);
+        }.sendEmptyMessageDelayed(0, 3000);
     }
 
     protected void loadPullableList() {
