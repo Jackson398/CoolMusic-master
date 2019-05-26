@@ -22,6 +22,11 @@
     <string name="song_list_item_title_1">1.%1$s - %2$s</string>
     <string name="song_list_item_title_2">2.%1$s - %2$s</string>
     <string name="song_list_item_title_3">3.%1$s - %2$s</string>
+    <string name="recent_update">最近更新：%s</string>
+
+    <string name="default_tv_title">百度热歌榜</string>
+    <string name="default_tv_update_date">最近更新：2016-01-03</string>
+    <string name="default_tv_comment">该榜单是根据百度音乐平台歌曲每周播放量自动生成的数据榜单，统计范围为百度音乐平台上的全部歌曲，每日更新一次</string>
     
     <string-array name="online_music_list_title">
         <item>主打榜单</item>

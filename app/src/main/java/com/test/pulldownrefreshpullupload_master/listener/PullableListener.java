@@ -5,7 +5,7 @@ import android.os.Message;
 
 import com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout;
 
-public class PullableListener implements PullToRefreshLayout.OnRefreshListener {
+public class PullableListener implements PullToRefreshLayout.OnPullableListener {
 
     @Override
     public void onRefresh(final PullToRefreshLayout pullToRefreshLayout) {

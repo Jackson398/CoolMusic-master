@@ -36,7 +36,7 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     private int state = INIT; // 当前状态
 
-    private OnRefreshListener mListener; // 刷新回调接口
+    private OnPullableListener mListener; // 刷新回调接口
 
     public static final int SUCCEED = 0; // 刷新成功
     public static final int FAILED = 1; // 刷新失败
@@ -460,7 +460,7 @@ public class PullToRefreshLayout extends RelativeLayout {
         }
     }
 
-    public void setOnRefreshListener(OnRefreshListener listener) {
+    public void setOnPullableListener(OnPullableListener listener) {
         mListener = listener;
     }
 
@@ -507,7 +507,7 @@ public class PullToRefreshLayout extends RelativeLayout {
     /**
      * Refresh an load callback interface
      */
-    public interface OnRefreshListener {
+    public interface OnPullableListener {
         /**
          * Invoked method when refresh something.
          * @param pullToRefreshLayout
