@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.test.pulldownrefreshpullupload_master.R;
 import com.test.pulldownrefreshpullupload_master.listener.OnMoreClickListener;
 import com.test.pulldownrefreshpullupload_master.model.OnlineMusic;
+import com.test.pulldownrefreshpullupload_master.utils.FileUtils;
 
 import java.util.List;
 
@@ -54,8 +55,7 @@ public class OnlineMusicAdapter extends BaseAdapter {
                 .error(R.mipmap.default_cover)
                 .into(holder.ivCover);
         holder.tvTitle.setText(onlineMusic.getTitle());
-//        String artist = FileUtils.getArtistAndAlbum(onlineMusic.getArtist_name(), onlineMusic.getAlbum_title());
-        String artist = "Michael Jackson";
+        String artist = FileUtils.getArtistAndAlbum(onlineMusic.getArtist_name(), onlineMusic.getAlbum_title());
         holder.tvArtist.setText(artist);
         holder.ivMore.setOnClickListener(new View.OnClickListener() {
             @Override

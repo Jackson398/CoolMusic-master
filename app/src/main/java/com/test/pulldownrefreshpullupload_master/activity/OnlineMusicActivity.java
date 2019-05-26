@@ -67,7 +67,18 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
         llOnLineMusic = (LinearLayout) findViewById(R.id.ll_online_music);
         vHeader = LayoutInflater.from(this).inflate(R.layout.activity_online_music_list_header, llOnLineMusic);
         ViewUtils.changeViewState(llOnLineMusic, llLoading, llLoadFail, LoadStateEnum.LOADING);
-        ptrl.setOnPullableListener(new PullableListener());
+        ptrl.setOnPullableListener(new PullableListener() {
+            @Override
+            protected void loadPullableList() {
+                getMusic(mOffset);
+            }
+
+            @Override
+            protected void refreshPullableList() {
+                mMusicList.clear();
+                getMusic(mOffset);
+            }
+        });
         mList.setAdapter(mAdapter);
     }
 
@@ -104,6 +115,8 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                     }
                 });
     }
+
+
 
     private void getMusic(final int offset) {
         HttpClient.getSongListInfo(mListInfo.getType(), MUSIC_LIST_SIZE, offset, new HttpCallback<OnlineMusicList>() {

@@ -12,6 +12,7 @@ public class PullableListener implements PullToRefreshLayout.OnPullableListener 
         new Handler() {
             @Override
             public void handleMessage(Message msg) {
+                refreshPullableList();
                 pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
             }
         }.sendEmptyMessageDelayed(0, 5000);
@@ -22,8 +23,14 @@ public class PullableListener implements PullToRefreshLayout.OnPullableListener 
         new Handler() {
             @Override
             public void handleMessage(Message msg) {
+                loadPullableList();
                 pullToRefreshLayout.loadMoreFinish(PullToRefreshLayout.SUCCEED);
             }
         }.sendEmptyMessageDelayed(0, 5000);
+    }
+
+    protected void loadPullableList() {
+    }
+    protected void refreshPullableList(){
     }
 }
