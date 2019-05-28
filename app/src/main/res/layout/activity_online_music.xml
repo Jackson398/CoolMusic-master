@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.cool.music.ui.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/pull_down_refresh_pull_up_load_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -26,7 +26,7 @@
 
             <include layout="@layout/refresh_head"/>
 
-            <com.test.pulldownrefreshpullupload_master.pulltorefresh.PullableListView
+            <com.cool.music.pulltorefresh.PullableListView
                 android:id="@+id/content_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -36,7 +36,7 @@
 
             <include layout="@layout/load_more" />
 
-        </com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout>
+        </com.cool.music.ui.PullToRefreshLayout>
 
     </FrameLayout>
 

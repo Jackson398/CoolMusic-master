@@ -5,6 +5,15 @@ import android.graphics.Bitmap;
 public class ImageUtils {
     private static final int BLUR_RADIUS = 50;
 
+    /**
+     * 将图片放大或者缩小到指定尺寸
+     */
+    public static Bitmap resizeImage(Bitmap source, int dstWidth, int dstHeight) {
+        if (source == null) return null;
+        if (source.getWidth() == dstWidth && source.getHeight() == dstHeight) return source;
+        return Bitmap.createScaledBitmap(source, dstWidth, dstHeight, true);
+    }
+
     public static Bitmap blur(Bitmap source) {
         if (source == null) {
             return null;

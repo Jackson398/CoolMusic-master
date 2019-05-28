@@ -1,5 +1,6 @@
 package com.cool.music.adapter;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import com.cool.music.R;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.model.Music;
+import com.cool.music.utils.CoverLoader;
+import com.cool.music.utils.FileUtils;
 
 import java.util.List;
 
@@ -63,7 +66,25 @@ public class PlaylistAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        //todo
+        Music music = musicList.get(position);
+//        Bitmap cover = CoverLoader.getInstance().loadThumb(music);
+        holder.ivCover.setImageBitmap(null);
+        holder.tvTitle.setText(music.getTitle());
+        String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
+        holder.tvArtist.setText(artist);
+        holder.ivMore.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onMoreClick(position);
+            }
+        });
+        holder.vDivider.setVisibility(isShowDivider(position) ? View.VISIBLE : View.GONE);
         return convertView;
+    }
+
+    //最后一行不显示分割符
+    private boolean isShowDivider(int position) {
+        return position != musicList.size() - 1;
     }
 
     private static class ViewHolder {

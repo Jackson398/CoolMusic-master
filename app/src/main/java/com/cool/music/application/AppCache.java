@@ -10,7 +10,10 @@ import com.amap.api.location.AMapLocalWeatherLive;
 import com.cool.music.executor.DownloadMusicInfo;
 import com.cool.music.model.Music;
 import com.cool.music.model.SheetInfo;
+import com.cool.music.storage.Preferences;
+import com.cool.music.utils.CoverLoader;
 import com.cool.music.utils.PreferencesUtils;
+import com.cool.music.utils.ScreenUtils;
 import com.cool.music.utils.ToastUtils;
 
 import java.util.ArrayList;
@@ -44,7 +47,9 @@ public class AppCache {
     public void init(Application application) {
         mContext = application.getApplicationContext();
         ToastUtils.init(mContext);
-        PreferencesUtils.init(mContext);
+        Preferences.init(mContext);
+        ScreenUtils.init(mContext);
+        CoverLoader.getInstance().init(mContext);
         application.registerActivityLifecycleCallbacks(new ActivityLifecycle());
     }
 

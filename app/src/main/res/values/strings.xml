@@ -28,6 +28,7 @@
     <string name="download_tips">当前处于移动网络，下载将消耗较多流量，是否继续下载？</string>
     <string name="download_tips_sure">继续下载</string>
     <string name="unable_to_download">暂时无法下载</string>
+    <string name="no_permission_storage">没有存储空间权限，无法扫描本地歌曲！</string>
 
     <string name="song_list_item_title_1">1.%1$s - %2$s</string>
     <string name="song_list_item_title_2">2.%1$s - %2$s</string>
