@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.test.pulldownrefreshpullupload_master.R;
+import com.test.pulldownrefreshpullupload_master.listener.PullableListener;
+import com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout;
 
 public class PullableListView extends ListView implements Pullable {
 

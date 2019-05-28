@@ -2,9 +2,12 @@ package com.test.pulldownrefreshpullupload_master.http;
 
 import android.support.annotation.NonNull;
 
+import com.test.pulldownrefreshpullupload_master.model.DownloadInfo;
 import com.test.pulldownrefreshpullupload_master.model.OnlineMusicList;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -34,6 +37,56 @@ public class HttpClient {
                 .addInterceptor(new HttpInterceptor())
                 .build();
         OkHttpUtils.initClient(okHttpClient);
+    }
+
+    public static void downloadFile(String url, String destFileDir, String destFileName, final HttpCallback<File> callback) {
+        OkHttpUtils.get().url(url).build()
+                .execute(new FileCallBack(destFileDir, destFileName) {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        if (callback != null) {
+                            callback.onFail(e);
+                        }
+                    }
+
+                    @Override
+                    public void onResponse(File response, int id) {
+                        if (callback != null) {
+                            callback.onSuccess(response);
+                        }
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        if (callback != null) {
+                            callback.onFinish();
+                        }
+                    }
+
+                });
+    }
+
+    public static void getMusicDownloadInfo(String songId, final HttpCallback<DownloadInfo> callback) {
+        OkHttpUtils.get().url(BASE_URL)
+                .addParams(PARAM_METHOD, METHOD_DOWNLOAD_MUSIC)
+                .addParams(PARAM_SONG_ID, songId)
+                .build()
+                .execute(new JsonCallback<DownloadInfo>(DownloadInfo.class) {
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onResponse(DownloadInfo response, int id) {
+                        callback.onSuccess(response);
+                    }
+                });
     }
 
     public static void getSongListInfo(String type, int size, int offset, @NonNull final HttpCallback<OnlineMusicList> callback) {

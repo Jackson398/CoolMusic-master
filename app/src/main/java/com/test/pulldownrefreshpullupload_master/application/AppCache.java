@@ -10,6 +10,8 @@ import com.amap.api.location.AMapLocalWeatherLive;
 import com.test.pulldownrefreshpullupload_master.executor.DownloadMusicInfo;
 import com.test.pulldownrefreshpullupload_master.model.Music;
 import com.test.pulldownrefreshpullupload_master.model.SheetInfo;
+import com.test.pulldownrefreshpullupload_master.utils.PreferencesUtils;
+import com.test.pulldownrefreshpullupload_master.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +32,19 @@ public class AppCache {
 
     public static AppCache getInstance() {
         if (instance == null) {
-            instance = new AppCache();
+            synchronized (AppCache.class) {
+                if (instance == null) {
+                    instance = new AppCache();
+                }
+            }
         }
         return instance;
     }
 
     public void init(Application application) {
         mContext = application.getApplicationContext();
+        ToastUtils.init(mContext);
+        PreferencesUtils.init(mContext);
         application.registerActivityLifecycleCallbacks(new ActivityLifecycle());
     }
 

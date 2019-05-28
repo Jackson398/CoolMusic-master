@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.test.pulldownrefreshpullupload_master.utils.PermissionReq;
+
 public abstract class BaseFragment extends Fragment {
     protected Handler handler;
 
@@ -25,9 +27,11 @@ public abstract class BaseFragment extends Fragment {
     protected void setListener() {
     }
 
+    //当出现动态申请权限时，该方法会被回调
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionReq.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

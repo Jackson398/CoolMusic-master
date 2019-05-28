@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="online_music_dialog">
+        <item>分享</item>
+        <item>查看歌手信息</item>
+        <item>下载</item>
+    </string-array>
+
+    <string-array name="online_music_dialog_without_download">
+        <item>分享</item>
+        <item>查看歌手信息</item>
+    </string-array>
+
+</resources>

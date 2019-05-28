@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setting_key_mobile_network_download">mobile_network_download</string>
+</resources>

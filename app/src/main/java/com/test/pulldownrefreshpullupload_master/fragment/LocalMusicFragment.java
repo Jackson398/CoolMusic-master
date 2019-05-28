@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.test.pulldownrefreshpullupload_master.R;
+import com.test.pulldownrefreshpullupload_master.application.AppCache;
+import com.test.pulldownrefreshpullupload_master.utils.PermissionReq;
 
 public class LocalMusicFragment extends BaseFragment {
     private ListView lvLocalMusic;

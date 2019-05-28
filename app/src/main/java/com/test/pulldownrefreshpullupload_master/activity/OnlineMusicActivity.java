@@ -1,9 +1,13 @@
 package com.test.pulldownrefreshpullupload_master.activity;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,21 +19,28 @@ import com.test.pulldownrefreshpullupload_master.R;
 import com.test.pulldownrefreshpullupload_master.adapter.OnlineMusicAdapter;
 import com.test.pulldownrefreshpullupload_master.constants.Extras;
 import com.test.pulldownrefreshpullupload_master.enums.LoadStateEnum;
+import com.test.pulldownrefreshpullupload_master.executor.DownloadOnlineMusic;
+import com.test.pulldownrefreshpullupload_master.executor.ShareOnlineMusic;
 import com.test.pulldownrefreshpullupload_master.http.HttpCallback;
 import com.test.pulldownrefreshpullupload_master.http.HttpClient;
+import com.test.pulldownrefreshpullupload_master.listener.OnMoreClickListener;
 import com.test.pulldownrefreshpullupload_master.listener.PullableListener;
 import com.test.pulldownrefreshpullupload_master.model.OnlineMusic;
 import com.test.pulldownrefreshpullupload_master.model.OnlineMusicList;
 import com.test.pulldownrefreshpullupload_master.model.SheetInfo;
 import com.test.pulldownrefreshpullupload_master.pulltorefresh.PullableListView;
 import com.test.pulldownrefreshpullupload_master.ui.PullToRefreshLayout;
+import com.test.pulldownrefreshpullupload_master.utils.FileUtils;
 import com.test.pulldownrefreshpullupload_master.utils.ImageUtils;
+import com.test.pulldownrefreshpullupload_master.utils.PermissionReq;
+import com.test.pulldownrefreshpullupload_master.utils.ToastUtils;
 import com.test.pulldownrefreshpullupload_master.utils.ViewUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineMusicActivity extends BaseActivity implements PullableListView.OnLoadListener {
+public class OnlineMusicActivity extends BaseActivity implements PullableListView.OnLoadListener, OnMoreClickListener {
 
     private static final int MUSIC_LIST_SIZE = 20;
     private PullableListView mList;
@@ -79,6 +90,7 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                 getMusic(mOffset);
             }
         });
+        mAdapter.setOnMoreClickListener(this);
         mList.setAdapter(mAdapter);
     }
 
@@ -116,7 +128,109 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                 });
     }
 
+    @Override
+    public void onMoreClick(int position) {
+        final OnlineMusic onlineMusic = mMusicList.get(position);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(mMusicList.get(position).getTitle());
+        String path = FileUtils.getMusicDir() + FileUtils.getMp3FileName(onlineMusic.getArtist_name(), onlineMusic.getTitle());
+        File file = new File(path);
+        int itemsId = file.exists() ? R.array.online_music_dialog_without_download : R.array.online_music_dialog;
+        dialog.setItems(itemsId, (dialog1, which) -> {
+            switch (which) {
+                case 0:// 分享
+                    share(onlineMusic);
+                    break;
+                case 1:// 查看歌手信息
+                    artistInfo(onlineMusic);
+                    break;
+                case 2:// 下载
+                    downloadOnlineMusic(onlineMusic);
+                    break;
+            }
+        });
 
+//        dialog.setItems(itemsId, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                switch (which) {
+//                    case 0:// 分享
+//                        share(onlineMusic);
+//                        break;
+//                    case 1:// 查看歌手信息
+//                        artistInfo(onlineMusic);
+//                        break;
+//                    case 2:// 下载
+//                        download(onlineMusic);
+//                        break;
+//                }
+//            }
+//        });
+        dialog.show();
+    }
+
+    //静态申请的权限可能无效，需要动态申请
+    private void downloadOnlineMusic(OnlineMusic onlineMusic) {
+        PermissionReq.with(this)
+                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .result(new PermissionReq.Result() {
+                    @Override
+                    public void onGranted() {
+                        download(onlineMusic);
+                    }
+
+                    @Override
+                    public void onDenied() {
+                    }
+                })
+                .request();
+
+    }
+
+    private void share(final OnlineMusic onlineMusic) {
+        new ShareOnlineMusic(this, onlineMusic.getTitle(), onlineMusic.getSong_id()) {
+            @Override
+            public void onPrepare() {
+                showProgress();
+            }
+
+            @Override
+            public void onExecuteSuccess(Void aVoid) {
+                cancelProgress();
+            }
+
+            @Override
+            public void onExecuteFail(Exception e) {
+                cancelProgress();
+            }
+        }.execute();
+    }
+
+    private void artistInfo(OnlineMusic onlineMusic) {
+        ArtistInfoActivity.start(this, onlineMusic.getTing_uid());
+    }
+
+    private void download(final OnlineMusic onlineMusic) {
+        new DownloadOnlineMusic(this, onlineMusic) {
+            @Override
+            public void onPrepare() {
+                showProgress();
+            }
+
+            @Override
+            public void onExecuteSuccess(Void aVoid) {
+                cancelProgress();
+                ToastUtils.show(getString(R.string.now_download, onlineMusic.getTitle()));
+            }
+
+            @Override
+            public void onExecuteFail(Exception e) {
+                cancelProgress();
+                ToastUtils.show(R.string.unable_to_download);
+            }
+        }.execute();
+    }
 
     private void getMusic(final int offset) {
         HttpClient.getSongListInfo(mListInfo.getType(), MUSIC_LIST_SIZE, offset, new HttpCallback<OnlineMusicList>() {

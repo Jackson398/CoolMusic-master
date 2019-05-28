@@ -1,11 +1,13 @@
 package com.test.pulldownrefreshpullupload_master.activity;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,10 +17,12 @@ import android.view.ViewGroup;
 
 import com.test.pulldownrefreshpullupload_master.R;
 import com.test.pulldownrefreshpullupload_master.service.PlayService;
+import com.test.pulldownrefreshpullupload_master.utils.PermissionReq;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection;
     protected PlayService playService;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +77,33 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void onServiceBound() {
 
+    }
+
+    public void showProgress() {
+        showProgress(getString(R.string.loading));
+    }
+
+    public void showProgress(String message) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+        }
+        progressDialog.setMessage(message);
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    public void cancelProgress() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.cancel();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionReq.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
