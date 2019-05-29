@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.blankj.rxbus.RxBus;
 import com.cool.music.R;
 import com.cool.music.application.AppCache;
 import com.cool.music.constants.RxBusTags;
@@ -15,7 +16,6 @@ import com.cool.music.executor.DownloadMusicInfo;
 import com.cool.music.utils.ToastUtils;
 import com.cool.music.utils.id3.ID3TagUtils;
 import com.cool.music.utils.id3.ID3Tags;
-import com.hwangjr.rxbus.RxBus;
 
 import java.io.File;
 
@@ -49,7 +49,8 @@ public class DownloadReceiver extends BroadcastReceiver {
             }
 
             // 由于系统扫描音乐是异步执行，因此延迟刷新音乐列表
-            mHandler.postDelayed(() -> RxBus.get().post(RxBusTags.SCAN_MUSIC, new Object()), 1000);
+            /**<a href="https://www.jianshu.com/p/2131c4088885">RxBus</a>**/
+            mHandler.postDelayed(() -> RxBus.getDefault().post(RxBusTags.SCAN_MUSIC), 1000);
         }
     }
 }

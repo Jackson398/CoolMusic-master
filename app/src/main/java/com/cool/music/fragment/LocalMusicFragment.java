@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.blankj.rxbus.RxBus;
 import com.cool.music.R;
 import com.cool.music.adapter.PlaylistAdapter;
 import com.cool.music.application.AppCache;
@@ -35,6 +36,12 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_local_music, container, false);
         initViews(view);
+        RxBus.getDefault().subscribe(this, new RxBus.Callback<String>() {
+            @Override
+            public void onEvent(String s) {
+                scanMusic();
+            }
+        });
         return view;
     }
 
@@ -51,7 +58,7 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
         if (AppCache.getInstance().getLoclMusicList().isEmpty()) {
-            scanMusic(null);
+            scanMusic();
         }
     }
 
@@ -60,7 +67,7 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     }
 
-    public void scanMusic(Object object) {
+    public void scanMusic() {
         lvLocalMusic.setVisibility(View.GONE);
         vSearching.setVisibility(View.VISIBLE);
         PermissionReq.with(this)
@@ -127,5 +134,9 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
         super.onSaveInstanceState(outState);
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RxBus.getDefault().unregister(this);
+    }
 }
