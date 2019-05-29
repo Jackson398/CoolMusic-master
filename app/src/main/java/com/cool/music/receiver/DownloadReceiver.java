@@ -48,7 +48,6 @@ public class DownloadReceiver extends BroadcastReceiver {
                 }
             }
 
-            // 由于系统扫描音乐是异步执行，因此延迟刷新音乐列表
             /**<a href="https://www.jianshu.com/p/2131c4088885">RxBus</a>**/
             mHandler.postDelayed(() -> RxBus.getDefault().post(RxBusTags.SCAN_MUSIC), 1000);
         }

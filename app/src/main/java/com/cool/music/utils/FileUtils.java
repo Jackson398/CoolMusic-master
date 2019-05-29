@@ -52,9 +52,18 @@ public class FileUtils {
         return artist + " - " + title;
     }
 
+    public static String getLrcFileName(String musicFilePath) {
+        return musicFilePath.substring(musicFilePath.lastIndexOf("/") + 1, musicFilePath.lastIndexOf("."))
+                .concat(".lrc");
+    }
+
+    public static String getAlbumFileName(String musicFilePath) {
+        return musicFilePath.substring(musicFilePath.lastIndexOf("/") + 1, musicFilePath.lastIndexOf("."));
+    }
+
     private static String getAppDir() {
-        //file path:/mnt/sdcard/PonyMusic
-        return Environment.getExternalStorageDirectory() + "/PonyMusic";
+        //file path:/mnt/sdcard/CoolMusic
+        return Environment.getExternalStorageDirectory() + "/CoolMusic";
     }
 
     public static String getMusicDir() {
@@ -81,7 +90,7 @@ public class FileUtils {
     }
 
     public static String getRelativeMusicDir() {
-        String dir = "PonyMusic/Music/";
+        String dir = "CoolMusic/Music/";
         return mkdirs(dir);
     }
 
