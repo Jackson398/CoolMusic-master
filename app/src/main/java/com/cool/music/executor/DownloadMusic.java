@@ -5,8 +5,8 @@ import android.app.Dialog;
 import android.support.v7.app.AlertDialog;
 
 import com.cool.music.R;
+import com.cool.music.storage.Preferences;
 import com.cool.music.utils.NetworkUtils;
-import com.cool.music.utils.PreferencesUtils;
 
 public abstract class DownloadMusic implements IExecutor<Void> {
     private Activity mActivity;
@@ -22,7 +22,7 @@ public abstract class DownloadMusic implements IExecutor<Void> {
 
     private void checkNetwork() {
         //将是否允许移动网络下载音乐存储到sharePreferences中
-        boolean mobileNetworkDownload = PreferencesUtils.enableMobileNetworkDownload();
+        boolean mobileNetworkDownload = Preferences.enableMobileNetworkDownload();
         if (NetworkUtils.isActiveNetworkMobile(mActivity) && !mobileNetworkDownload) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle(R.string.tips);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.cool.music.R;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.model.Music;
+import com.cool.music.service.AudioPlayer;
 import com.cool.music.utils.CoverLoader;
 import com.cool.music.utils.FileUtils;
 
@@ -66,10 +67,10 @@ public class PlaylistAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        //todo
+        holder.vPlaying.setVisibility((isPlaylist && position == AudioPlayer.getInstance().getPlayPosition()) ? View.VISIBLE : View.INVISIBLE);
         Music music = musicList.get(position);
-//        Bitmap cover = CoverLoader.getInstance().loadThumb(music);
-        holder.ivCover.setImageBitmap(null);
+        Bitmap cover = CoverLoader.getInstance().loadThumb(music);
+        holder.ivCover.setImageBitmap(cover);
         holder.tvTitle.setText(music.getTitle());
         String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
         holder.tvArtist.setText(artist);

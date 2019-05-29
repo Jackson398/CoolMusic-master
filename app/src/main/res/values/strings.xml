@@ -29,6 +29,7 @@
     <string name="download_tips_sure">继续下载</string>
     <string name="unable_to_download">暂时无法下载</string>
     <string name="no_permission_storage">没有存储空间权限，无法扫描本地歌曲！</string>
+    <string name="no_permission_download">没有存储空间权限，无法下载在线音乐！</string>
 
     <string name="song_list_item_title_1">1.%1$s - %2$s</string>
     <string name="song_list_item_title_2">2.%1$s - %2$s</string>
@@ -36,6 +37,7 @@
     <string name="recent_update">最近更新：%s</string>
     <string name="share_music">我用%1$s分享了歌曲《%2$s》%3$s</string>
     <string name="now_download">正在下载：%s</string>
+    <string name="download_success">%s下载完成</string>
 
     <string name="default_tv_title">百度热歌榜</string>
     <string name="default_tv_update_date">最近更新：2016-01-03</string>

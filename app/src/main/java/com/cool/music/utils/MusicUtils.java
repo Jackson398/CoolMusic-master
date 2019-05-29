@@ -1,7 +1,9 @@
 package com.cool.music.utils;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 
@@ -83,5 +85,10 @@ public class MusicUtils {
         cursor.close();
 
         return musicList;
+    }
+
+    public static Uri getMediaStoreAlbumCoverUri(long albumId) {
+        Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
+        return ContentUris.withAppendedId(artworkUri, albumId);
     }
 }

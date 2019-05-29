@@ -1,6 +1,12 @@
 package com.cool.music.utils;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 
 public class ImageUtils {
     private static final int BLUR_RADIUS = 50;
@@ -25,6 +31,55 @@ public class ImageUtils {
             e.printStackTrace();
             return source;
         }
+    }
+
+    /**根据目标View的尺寸压缩图片并返回Bitmap @see <a href="https://blog.csdn.net/flowsky37/article/details/78460117"></a>**/
+    public static Bitmap decodeBitmapFromResource(Resources resources, int resId, int width, int height) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inSampleSize = calculateInSampleSize(options, width, height);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(resources, resId, options);
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        int originalWidth = options.outWidth;
+        int originalHeight = options.outHeight;
+
+        int inSampleSize = 1;
+
+        if (originalHeight > reqHeight || originalWidth > reqWidth) {
+            int halfHeight = originalHeight / 2;
+            int halfWidth = originalWidth / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    /**
+     *将图片剪裁为圆形
+     */
+    public static Bitmap createCircleImage(Bitmap source) {
+        if (source == null) {
+            return null;
+        }
+
+        int length = Math.min(source.getWidth(), source.getHeight());
+        Paint paint = new Paint();
+        paint.setAntiAlias(true); //防止边缘锯齿
+        Bitmap target = Bitmap.createBitmap(length, length, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(target);
+        canvas.drawCircle(source.getWidth() / 2, source.getHeight() / 2, length / 2, paint);
+        /**
+         * GPU硬件加速提高了Android系统显示和刷新的速度，在API11到API13之间虽然支持硬件加速，但是默认是关闭的，在API14
+         * 之后，硬件加速默认是开启的。GPU加速会出现三个问题：兼容性问题；内存消耗问题；电量消耗问题。
+         * @see <a href= "https://www.jianshu.com/p/78c36742d50f">绘图</a>
+         */
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN)); //图形混合模式，PorterDuffXfermode不支持部分硬件加速函数
+        canvas.drawBitmap(source, 0, 0, paint); //绘制图片，起始坐标为距离左边缘距离0,距离右边缘距离0
+        return target;
     }
 
     /**

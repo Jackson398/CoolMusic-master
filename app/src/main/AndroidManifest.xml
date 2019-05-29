@@ -39,6 +39,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <receiver android:name=".receiver.DownloadReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".service.PlayService"/>
 
         <activity android:name=".activity.MusicActivity"

@@ -12,7 +12,6 @@ import com.cool.music.model.Music;
 import com.cool.music.model.SheetInfo;
 import com.cool.music.storage.Preferences;
 import com.cool.music.utils.CoverLoader;
-import com.cool.music.utils.PreferencesUtils;
 import com.cool.music.utils.ScreenUtils;
 import com.cool.music.utils.ToastUtils;
 

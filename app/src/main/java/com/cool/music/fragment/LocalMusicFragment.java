@@ -106,6 +106,12 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
     @Override
     protected void setListener() {
         lvLocalMusic.setOnItemClickListener(this);

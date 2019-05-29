@@ -26,7 +26,7 @@
 
             <include layout="@layout/refresh_head"/>
 
-            <com.cool.music.pulltorefresh.PullableListView
+            <com.cool.music.widget.PullableListView
                 android:id="@+id/content_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

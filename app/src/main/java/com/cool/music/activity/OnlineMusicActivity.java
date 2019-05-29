@@ -26,7 +26,7 @@ import com.cool.music.listener.PullableListener;
 import com.cool.music.model.OnlineMusic;
 import com.cool.music.model.OnlineMusicList;
 import com.cool.music.model.SheetInfo;
-import com.cool.music.pulltorefresh.PullableListView;
+import com.cool.music.widget.PullableListView;
 import com.cool.music.ui.PullToRefreshLayout;
 import com.cool.music.utils.FileUtils;
 import com.cool.music.utils.ImageUtils;
@@ -180,6 +180,7 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
 
                     @Override
                     public void onDenied() {
+                        ToastUtils.show(R.string.no_permission_download);
                     }
                 })
                 .request();

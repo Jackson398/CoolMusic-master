@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cool.music.R;
-import com.cool.music.pulltorefresh.Pullable;
+import com.cool.music.widget.Pullable;
 
 import java.util.Timer;
 import java.util.TimerTask;

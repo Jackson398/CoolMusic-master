@@ -1,8 +1,10 @@
 package com.cool.music.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
@@ -10,6 +12,8 @@ import android.text.TextUtils;
 import com.cool.music.R;
 import com.cool.music.model.Music;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,21 +91,91 @@ public class CoverLoader {
         Bitmap bitmap;
         String key = getKey(music);
         LruCache<String, Bitmap> cache = cacheMap.get(type);
-        if (TextUtils.isEmpty(key)) {
-            bitmap = cache.get(KEY_NULL);
+        if (TextUtils.isEmpty(key)) { //键为null，表示使用默认的封面
+            bitmap = cache.get(KEY_NULL);//先从缓存中获取，获取到直接返回
             if (bitmap != null) {
                 return bitmap;
             }
 
-            bitmap = getDefaultCover(type);
-            cache.put(KEY_NULL, bitmap);
+            bitmap = getDefaultCover(type);//缓存中不存在，而获取默认封面
+            cache.put(KEY_NULL, bitmap); //缓存
             return bitmap;
         }
+
+        bitmap = cache.get(key); //获取缓存中的封面
+        if (bitmap != null) {
+            return bitmap;
+        }
+
+        bitmap = loadCoverByType(music, type); //获取本地或者网络下载的封面
+        if (bitmap != null) {
+            cache.put(key, bitmap);
+            return bitmap;
+        }
+
         return loadCover(null, type);
     }
 
+
+    private Bitmap loadCoverByType(Music music, Type type) {
+        Bitmap bitmap;
+        if (music.getType() == Music.Type.LOCAL) {
+            bitmap = loadCoverFromMediaStore(music.getAlbumId());
+        } else {
+            bitmap = loadCoverFromFile(music.getCoverPath());
+        }
+
+        switch (type) {
+            case ROUND:
+                bitmap = ImageUtils.resizeImage(bitmap, roundLength, roundLength);
+                return ImageUtils.createCircleImage(bitmap);
+            case BLUR:
+                return ImageUtils.blur(bitmap);
+            default:
+                return bitmap;
+        }
+    }
+
+    /**
+     * 从下载的图片中加载封面<br>
+     * 网络音乐
+     */
+    private Bitmap loadCoverFromFile(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    /**
+     * 从媒体库中加载封面<br>
+     * 本地音乐
+     */
+    private Bitmap loadCoverFromMediaStore(long albumId) {
+        ContentResolver resolver = context.getContentResolver();
+        Uri uri = MusicUtils.getMediaStoreAlbumCoverUri(albumId);
+        InputStream is;
+        try {
+            is = resolver.openInputStream(uri);
+        } catch (FileNotFoundException ignored) {
+            return null;
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options(); //该类用于对图片进行解码时使用的配置参数类
+        options.inPreferredConfig = Bitmap.Config.RGB_565; //设置图片解码时使用的颜色模式
+        return BitmapFactory.decodeStream(is, null, options);
+    }
+
     private Bitmap getDefaultCover(Type type) {
-        return null;
+        switch (type) {
+            case ROUND:
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.play_page_default_cover);
+                bitmap = ImageUtils.resizeImage(bitmap, roundLength, roundLength);
+                return bitmap;
+            case BLUR:
+                return BitmapFactory.decodeResource(context.getResources(), R.mipmap.play_page_default_bg);
+            default:
+                return BitmapFactory.decodeResource(context.getResources(), R.mipmap.default_cover);
+        }
     }
 
     private String getKey(Music music) {
