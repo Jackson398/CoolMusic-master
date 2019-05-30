@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.cool.music.model.DownloadInfo;
 import com.cool.music.model.OnlineMusicList;
+import com.cool.music.model.SearchMusic;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
@@ -99,6 +100,29 @@ public class HttpClient {
                 .execute(new JsonCallback<OnlineMusicList>(OnlineMusicList.class) {
                     @Override
                     public void onResponse(OnlineMusicList response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void searchMusic(String keyword, @NonNull final HttpCallback<SearchMusic> callback) {
+        OkHttpUtils.get().url(BASE_URL)
+                .addParams(PARAM_METHOD, METHOD_SEARCH_MUSIC)
+                .addParams(PARAM_QUERY, keyword)
+                .build()
+                .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
+                    @Override
+                    public void onResponse(SearchMusic response, int id) {
                         callback.onSuccess(response);
                     }
 

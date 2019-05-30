@@ -2,12 +2,19 @@ package com.cool.music.fragment;
 
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.AlarmClock;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,17 +24,25 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.rxbus.RxBus;
 import com.cool.music.R;
+import com.cool.music.activity.MusicInfoActivity;
 import com.cool.music.adapter.PlaylistAdapter;
 import com.cool.music.application.AppCache;
+import com.cool.music.application.WeChatOpenPlatform;
+import com.cool.music.constants.RequestCode;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.model.Music;
+import com.cool.music.utils.CoverLoader;
 import com.cool.music.utils.FileUtils;
 import com.cool.music.utils.MusicUtils;
 import com.cool.music.utils.PermissionReq;
 import com.cool.music.utils.ToastUtils;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 
 import java.io.File;
 import java.util.List;
@@ -79,12 +94,13 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
                     shareMusic(music);
                     break;
                 case 1: //设为铃声
-                    requestSetRingtone(music);
+                    requestSetAlarm(music);
                     break;
                 case 2: //删除
                     deleteMusic(music);
                     break;
                 case 3: //歌曲信息
+//                    MusicInfoActivity.start(getContext(), music);
                     break;
             }
         });
@@ -99,8 +115,8 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
         dialog.setPositiveButton(R.string.delete, (dialog1, which) -> {
             String musicFilePath = music.getPath();
             File musicFile = new File(musicFilePath);
-            File lrcFile = new File(FileUtils.getLrcDir()+ File.separator + FileUtils.getLrcFileName(musicFilePath));
-            File albumFile = new File(FileUtils.getAlbumDir() + File.separator + FileUtils.getAlbumFileName(musicFilePath));
+            File lrcFile = new File(FileUtils.getLrcFilePath(musicFile.getName()));
+            File albumFile = new File(FileUtils.getAlbumFilePath(musicFile.getName()));
             if(musicFile.delete() && lrcFile.delete() && albumFile.delete()) {
                 AppCache.getInstance().getLoclMusicList().remove(music); //删除本地歌曲后将歌曲信息从缓存中删除
                 adapter.notifyDataSetChanged();
@@ -113,12 +129,58 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
         dialog.show();
     }
 
-    private void requestSetRingtone(final Music music) {
+    private void requestSetAlarm(final Music music) {
+        //Android M把权限做了加强管理，在mainfest申明后，在使用到相关功能时还需要重新授权方可使用
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(getContext())) {
+            ToastUtils.show(R.string.no_permission_setting);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+            intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+            startActivityForResult(intent, RequestCode.REQUEST_WRITE_SETTINGS);
+        } else {
+            setAlarm(music);
+        }
+    }
+
+    //设置闹钟
+    private void setAlarm(Music music) {
+        Uri uri = MediaStore.Audio.Media.getContentUriForPath(music.getPath());
+        //查询音乐文件在媒体库是否存在
+        Cursor cursor = getContext().getContentResolver().query(uri, null,
+                MediaStore.MediaColumns.DATA + "=?", new String[]{music.getPath()}, null);
+        if (cursor == null) { return; }
+        //查询得到的cursor指向第一条记录之前，使用moveToFirst和moveToNext都可以将cursor移动到第一条记录上
+        if (cursor.moveToFirst() && cursor.getCount() > 0) {
+            String _id = cursor.getString(0);
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Audio.Media.IS_MUSIC, true);
+            values.put(MediaStore.Audio.Media.IS_RINGTONE, false); //来电铃声
+            values.put(MediaStore.Audio.Media.IS_ALARM, true); //闹铃铃声
+            values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false); //通知铃声
+            values.put(MediaStore.Audio.Media.IS_PODCAST, false);
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3");
+
+            getContext().getContentResolver().update(uri, values, MediaStore.MediaColumns.DATA + "=?", new String[]{music.getPath()});
+            Uri newUri = ContentUris.withAppendedId(uri, Long.valueOf(_id));
+            RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_ALARM, newUri);//设置闹铃铃声
+//            RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_RINGTONE, newUri); //设置来电铃声
+            ToastUtils.show(R.string.setting_ringtone_success);
+        }
+        cursor.close();
     }
 
     private void shareMusic(Music music) {
-        //todo
-        //使用微信开发平台开发支持微信分享
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = "www.baidu.com";//分享url
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = music.getTitle();
+        msg.description = music.getArtist() + "-" + music.getAlbum();
+        msg.thumbData = CoverLoader.getInstance().getThumbData(music, R.id.iv_cover);//封面图片byte数组
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = String.valueOf(System.currentTimeMillis());
+        req.message = msg;
+        req.scene = SendMessageToWX.Req.WXSceneSession;
+        WeChatOpenPlatform.getInstance().getWxAPI().sendReq(req);
     }
 
     public void scanMusic() {
@@ -181,6 +243,11 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestCode.REQUEST_WRITE_SETTINGS) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(getContext())) {
+                ToastUtils.show(R.string.grant_permission_setting);
+            }
+        }
     }
 
     @Override

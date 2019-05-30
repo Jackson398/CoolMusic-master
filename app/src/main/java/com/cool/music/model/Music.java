@@ -2,7 +2,9 @@ package com.cool.music.model;
 
 import android.text.TextUtils;
 
-public class Music {
+import java.io.Serializable;
+
+public class Music implements Serializable {
     private static final long serialVersionUID = 536871008;
 
     private Long id;

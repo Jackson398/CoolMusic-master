@@ -59,5 +59,14 @@
 
         <activity android:name=".activity.OnlineMusicActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.MusicInfoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.ArtistInfoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.SearchMusicActivity"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

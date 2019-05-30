@@ -1,5 +1,6 @@
 package com.cool.music.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -90,6 +91,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.iv_search:
+                startActivity(new Intent(this, SearchMusicActivity.class));
                 break;
             case R.id.tv_local_music:
                 mViewPager.setCurrentItem(0);

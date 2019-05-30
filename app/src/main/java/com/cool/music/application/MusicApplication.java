@@ -7,5 +7,6 @@ public class MusicApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AppCache.getInstance().init(this);
+        WeChatOpenPlatform.getInstance().init(this);
     }
 }

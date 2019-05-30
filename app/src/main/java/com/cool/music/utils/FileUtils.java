@@ -52,13 +52,12 @@ public class FileUtils {
         return artist + " - " + title;
     }
 
-    public static String getLrcFileName(String musicFilePath) {
-        return musicFilePath.substring(musicFilePath.lastIndexOf("/") + 1, musicFilePath.lastIndexOf("."))
-                .concat(".lrc");
+    public static String getLrcFilePath(String musicFileName) {
+        return getLrcDir() + File.separator + musicFileName.substring(0, musicFileName.lastIndexOf(".")) + LRC;
     }
 
-    public static String getAlbumFileName(String musicFilePath) {
-        return musicFilePath.substring(musicFilePath.lastIndexOf("/") + 1, musicFilePath.lastIndexOf("."));
+    public static String getAlbumFilePath(String musicFileName) {
+        return getAlbumDir() + File.separator + musicFileName.substring(0, musicFileName.lastIndexOf("."));
     }
 
     private static String getAppDir() {

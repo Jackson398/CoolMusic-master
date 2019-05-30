@@ -8,14 +8,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import com.cool.music.R;
 import com.cool.music.model.Music;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.cool.music.application.WeChatOpenPlatform.IMAGE_SIZE;
 
 
 /**
@@ -81,6 +85,29 @@ public class CoverLoader {
         cacheMap.put(Type.THUMB, thumbCache);
         cacheMap.put(Type.ROUND, roundCache);
         cacheMap.put(Type.BLUR, blurCache);
+    }
+
+    public byte[] getThumbData(Music music) {
+        //todo
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 2;
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), 1, options);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+        int quality = 100;
+        while (output.toByteArray().length > IMAGE_SIZE && quality != 10) {
+            output.reset();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, output);
+            quality -= 10;
+        }
+        bitmap.recycle();
+        byte[] result = output.toByteArray();
+        try {
+            output.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public Bitmap loadThumb(Music music) {
