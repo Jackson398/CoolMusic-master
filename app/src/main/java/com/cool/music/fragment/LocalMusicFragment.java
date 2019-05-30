@@ -40,6 +40,7 @@ import com.cool.music.utils.FileUtils;
 import com.cool.music.utils.MusicUtils;
 import com.cool.music.utils.PermissionReq;
 import com.cool.music.utils.ToastUtils;
+import com.cool.music.utils.WeChatUtils;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -162,25 +163,14 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
             getContext().getContentResolver().update(uri, values, MediaStore.MediaColumns.DATA + "=?", new String[]{music.getPath()});
             Uri newUri = ContentUris.withAppendedId(uri, Long.valueOf(_id));
             RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_ALARM, newUri);//设置闹铃铃声
-//            RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_RINGTONE, newUri); //设置来电铃声
             ToastUtils.show(R.string.setting_ringtone_success);
         }
         cursor.close();
     }
 
     private void shareMusic(Music music) {
-        WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = "www.baidu.com";//分享url
-        WXMediaMessage msg = new WXMediaMessage(webpage);
-        msg.title = music.getTitle();
-        msg.description = music.getArtist() + "-" + music.getAlbum();
-        msg.thumbData = CoverLoader.getInstance().getThumbData(music, R.id.iv_cover);//封面图片byte数组
-
-        SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = String.valueOf(System.currentTimeMillis());
-        req.message = msg;
-        req.scene = SendMessageToWX.Req.WXSceneSession;
-        WeChatOpenPlatform.getInstance().getWxAPI().sendReq(req);
+        //todo
+        WeChatUtils.shareMusicToWeChatFriends(music);
     }
 
     public void scanMusic() {

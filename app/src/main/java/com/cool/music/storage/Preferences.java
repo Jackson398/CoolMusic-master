@@ -40,12 +40,24 @@ public class Preferences {
         return getBoolean(sContext.getString(R.string.setting_key_mobile_network_download), false);
     }
 
+    public static boolean enableMobileNetworkPlay() {
+        return getBoolean(sContext.getString(R.string.setting_key_mobile_network_play), false);
+    }
+
     private static boolean getBoolean(String key, boolean defValue) {
         return getPreferences().getBoolean(key, defValue);
     }
 
     public static void savePlayPosition(int position) {
         saveInt(PLAY_POSITION, position);
+    }
+
+    public static void saveMobileNetworkPlay(boolean enable) {
+        saveBoolean(sContext.getString(R.string.setting_key_mobile_network_play), enable);
+    }
+
+    private static void saveBoolean(String key, boolean value) {
+        getPreferences().edit().putBoolean(key, value).apply();
     }
 
     private static void saveInt(String key, int value) {

@@ -88,10 +88,9 @@ public class CoverLoader {
     }
 
     public byte[] getThumbData(Music music) {
-        //todo
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), 1, options);
+        Bitmap bitmap = CoverLoader.getInstance().loadThumb(music);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
         int quality = 100;

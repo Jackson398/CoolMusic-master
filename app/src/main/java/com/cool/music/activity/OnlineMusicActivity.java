@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,14 +19,17 @@ import com.cool.music.adapter.OnlineMusicAdapter;
 import com.cool.music.constants.Extras;
 import com.cool.music.enums.LoadStateEnum;
 import com.cool.music.executor.DownloadOnlineMusic;
+import com.cool.music.executor.PlayOnlineMusic;
 import com.cool.music.executor.ShareOnlineMusic;
 import com.cool.music.http.HttpCallback;
 import com.cool.music.http.HttpClient;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.listener.PullableListener;
+import com.cool.music.model.Music;
 import com.cool.music.model.OnlineMusic;
 import com.cool.music.model.OnlineMusicList;
 import com.cool.music.model.SheetInfo;
+import com.cool.music.service.AudioPlayer;
 import com.cool.music.widget.PullableListView;
 import com.cool.music.ui.PullToRefreshLayout;
 import com.cool.music.utils.FileUtils;
@@ -38,7 +42,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineMusicActivity extends BaseActivity implements PullableListView.OnLoadListener, OnMoreClickListener {
+public class OnlineMusicActivity extends BaseActivity implements PullableListView.OnLoadListener, OnMoreClickListener, AdapterView.OnItemClickListener {
 
     private static final int MUSIC_LIST_SIZE = 20;
     private PullableListView mList;
@@ -126,6 +130,8 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                 });
     }
 
+
+
     @Override
     public void onMoreClick(int position) {
         final OnlineMusic onlineMusic = mMusicList.get(position);
@@ -165,6 +171,32 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
 //            }
 //        });
         dialog.show();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        play((OnlineMusic) parent.getAdapter().getItem(position));
+    }
+
+    private void play(OnlineMusic onlineMusic) {
+        new PlayOnlineMusic(this, onlineMusic) {
+            @Override
+            public void onPrepare() {
+                showProgress();
+            }
+
+            @Override
+            public void onExecuteSuccess(Music music) {
+                cancelProgress();
+                AudioPlayer.getInstance().addAndPlay(music);
+                ToastUtils.show("已添加到播放列表");
+            }
+
+            @Override
+            public void onExecuteFail(Exception e) {
+
+            }
+        }.execute();
     }
 
     //静态申请的权限可能无效，需要动态申请

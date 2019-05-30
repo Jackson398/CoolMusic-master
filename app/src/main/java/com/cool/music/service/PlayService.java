@@ -18,6 +18,7 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        AudioPlayer.getInstance().init(this);
     }
 
     @Nullable
