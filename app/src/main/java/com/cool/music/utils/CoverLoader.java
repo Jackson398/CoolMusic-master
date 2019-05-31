@@ -32,7 +32,7 @@ public class CoverLoader {
     private Context context;
     private Map<Type, LruCache<String, Bitmap>> cacheMap;
     private int roundLength = ScreenUtils.getScreenWidth() / 2;
-    private static CoverLoader instance;
+    private static volatile CoverLoader instance;
 
     private enum Type {
         THUMB,

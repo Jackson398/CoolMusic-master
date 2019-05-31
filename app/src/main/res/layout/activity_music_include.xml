@@ -32,6 +32,12 @@
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <include
+            layout="@layout/include_play_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/play_bar_height"
+            android:layout_gravity="bottom" />
     </FrameLayout>
 
 </LinearLayout>

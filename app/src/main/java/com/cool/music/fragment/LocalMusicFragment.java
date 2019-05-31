@@ -35,6 +35,7 @@ import com.cool.music.application.WeChatOpenPlatform;
 import com.cool.music.constants.RequestCode;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.model.Music;
+import com.cool.music.service.AudioPlayer;
 import com.cool.music.utils.CoverLoader;
 import com.cool.music.utils.FileUtils;
 import com.cool.music.utils.MusicUtils;
@@ -76,17 +77,17 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        adapter = new PlaylistAdapter(AppCache.getInstance().getLoclMusicList());
+        adapter = new PlaylistAdapter(AppCache.getInstance().getLocalMusicList());
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
-        if (AppCache.getInstance().getLoclMusicList().isEmpty()) {
+        if (AppCache.getInstance().getLocalMusicList().isEmpty()) {
             scanMusic();
         }
     }
 
     @Override
     public void onMoreClick(final int position) {
-        Music music = AppCache.getInstance().getLoclMusicList().get(position);
+        Music music = AppCache.getInstance().getLocalMusicList().get(position);
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(music.getTitle());
         dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
@@ -119,7 +120,7 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
             File lrcFile = new File(FileUtils.getLrcFilePath(musicFile.getName()));
             File albumFile = new File(FileUtils.getAlbumFilePath(musicFile.getName()));
             if(musicFile.delete() && lrcFile.delete() && albumFile.delete()) {
-                AppCache.getInstance().getLoclMusicList().remove(music); //删除本地歌曲后将歌曲信息从缓存中删除
+                AppCache.getInstance().getLocalMusicList().remove(music); //删除本地歌曲后将歌曲信息从缓存中删除
                 adapter.notifyDataSetChanged();
                 //刷新媒体库
                 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://".concat(music.getPath())));
@@ -190,8 +191,8 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
                             @Override
                             protected void onPostExecute(List<Music> musicList) {
-                                AppCache.getInstance().getLoclMusicList().clear();
-                                AppCache.getInstance().getLoclMusicList().addAll(musicList);
+                                AppCache.getInstance().getLocalMusicList().clear();
+                                AppCache.getInstance().getLocalMusicList().addAll(musicList);
                                 lvLocalMusic.setVisibility(View.VISIBLE);
                                 vSearching.setVisibility(View.GONE);
                                 adapter.notifyDataSetChanged();
@@ -216,7 +217,9 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        Music music = AppCache.getInstance().getLocalMusicList().get(position);
+        AudioPlayer.getInstance().addAndPlay(music); //将音乐添加到播放列表并播放音乐
+        ToastUtils.show("已添加到播放列表");
     }
 
 

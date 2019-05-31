@@ -92,6 +92,7 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                 getMusic(mOffset);
             }
         });
+        mList.setOnItemClickListener(this);
         mAdapter.setOnMoreClickListener(this);
         mList.setAdapter(mAdapter);
     }

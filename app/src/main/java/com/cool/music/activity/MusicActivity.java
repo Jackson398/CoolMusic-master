@@ -9,13 +9,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cool.music.R;
 import com.cool.music.adapter.FragmentAdapter;
+import com.cool.music.executor.ControlPanel;
 import com.cool.music.fragment.LocalMusicFragment;
 import com.cool.music.fragment.SheetListFragment;
+import com.cool.music.service.AudioPlayer;
 
 
 public class MusicActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -28,6 +31,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private TextView tvLocalMusic;
     private TextView tvOnlineMusic;
     private ViewPager mViewPager;
+    private ControlPanel controlPanel;
+    private FrameLayout flPlayBar;
     private LocalMusicFragment mLocalMusicFragment;
     private SheetListFragment mSheetListFragment;
 
@@ -35,7 +40,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-        initViews();
     }
 
     private void initViews() {
@@ -46,6 +50,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         tvLocalMusic = (TextView) findViewById(R.id.tv_local_music);
         tvOnlineMusic = (TextView) findViewById(R.id.tv_online_music);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        flPlayBar = (FrameLayout) findViewById(R.id.fl_play_bar);
 
         mLocalMusicFragment = new LocalMusicFragment();
         mSheetListFragment = new SheetListFragment();
@@ -60,7 +65,15 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         tvLocalMusic.setOnClickListener(this);
         tvOnlineMusic.setOnClickListener(this);
         mViewPager.addOnPageChangeListener(this);
+        flPlayBar.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onServiceBound() {
+        initViews();
+        controlPanel = new ControlPanel(flPlayBar);
+        AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);
     }
 
     @Override
@@ -120,5 +133,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AudioPlayer.getInstance().removeOnPlayEventListener(controlPanel);
     }
 }

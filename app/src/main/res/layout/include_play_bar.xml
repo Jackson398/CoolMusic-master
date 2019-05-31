@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_play_bar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/play_bar_height"
+    android:background="?attr/playBarBackground">
+
+    <!--
+    android:gravity="center_vertical"限定它里面的内容要垂直居中显示
+    android:layout_gravity="center_vertical"指它的位置是相对于它父亲的垂直居中
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <!--
+        android:contentDescription:内容概述
+        android:scaleType:控制图片如何resized/moved来匹配ImageView的size,fitXY把图片不按比例
+        扩大/缩小到VIEW的大小显示
+        -->
+        <ImageView
+            android:id="@+id/iv_play_bar_cover"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@mipmap/default_cover" />
+
+        <!--
+        android:layout_width="0dp"按比例显示LinearLayout内各个子控件
+        android:layout_marginLeft:离某元素左边缘的的距离
+        android:layout_weight权重，控制控件之间的地位,在控制控件显示的大小时蛮有用的,默认是0
+        network address is https://blog.csdn.net/akiyame/article/details/50858553
+        -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!--
+            内容过长时使用下面两个属性配合
+            android:ellipsize = "end"　　 省略号在结尾
+            android:ellipsize = "start"   省略号在开头
+            android:ellipsize = "middle"  省略号在中间
+            android:ellipsize = "marquee" 跑马灯
+            android:singleline = "true"
+            -->
+            <TextView
+                android:id="@+id/tv_play_bar_title"
+                style="@style/AppTheme.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="无音乐"
+                android:textSize="@dimen/text_size_common" />
+
+            <!--Android:ellipsize 设置当文字过长时，该控件如何显示,end省略号在结尾
+            android:singleLine设置单行显示。如果和layout_width一起使用，当文本不能全部显示时，后面用“…”来表示
+
+            -->
+            <TextView
+                android:id="@+id/tv_play_bar_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/grey"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!--android:contentDescription用于帮助视力有障碍的用户，属性必须在用户Accessible中的相应属性开启后才能使用，@null表示不使用该属性-->
+        <ImageView
+            android:id="@+id/iv_play_bar_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/play_bar_btn_play_pause_selector" />
+
+        <ImageView
+            android:id="@+id/iv_play_bar_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_play_bar_btn_next" />
+
+        <ImageView
+            android:id="@+id/v_play_bar_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_play_bar_btn_playlist" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_play_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="bottom"
+        android:progressDrawable="@drawable/progress_bar_style" />
+</FrameLayout>

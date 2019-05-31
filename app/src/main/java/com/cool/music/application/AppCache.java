@@ -67,7 +67,7 @@ public class AppCache {
         return mContext;
     }
 
-    public List<Music> getLoclMusicList() {
+    public List<Music> getLocalMusicList() {
         return mLoclMusicList;
     }
 
