@@ -32,7 +32,7 @@ public class CoverLoader {
     private Context context;
     private Map<Type, LruCache<String, Bitmap>> cacheMap;
     private int roundLength = ScreenUtils.getScreenWidth() / 2;
-    private static volatile CoverLoader instance;
+    private volatile static CoverLoader instance;
 
     private enum Type {
         THUMB,
@@ -87,6 +87,10 @@ public class CoverLoader {
         cacheMap.put(Type.BLUR, blurCache);
     }
 
+    public Bitmap loadBlur(Music music) {
+        return loadCover(music, Type.BLUR);
+    }
+
     public byte[] getThumbData(Music music) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
@@ -111,6 +115,17 @@ public class CoverLoader {
 
     public Bitmap loadThumb(Music music) {
         return loadCover(music, Type.THUMB);
+    }
+
+    public Bitmap loadRound(Music music) {
+        return loadCover(music, Type.ROUND);
+    }
+
+    public void setRoundLength(int roundLength) {
+        if (this.roundLength != roundLength) {
+            this.roundLength = roundLength;
+            cacheMap.get(Type.ROUND).evictAll();
+        }
     }
 
     private Bitmap loadCover(Music music, Type type) {
@@ -146,11 +161,12 @@ public class CoverLoader {
     private Bitmap loadCoverByType(Music music, Type type) {
         Bitmap bitmap;
         if (music.getType() == Music.Type.LOCAL) {
-            bitmap = loadCoverFromMediaStore(music.getAlbumId());
+            bitmap = loadCoverFromMediaStore(music.getAlbumId()); //从媒体库库加载封面
         } else {
-            bitmap = loadCoverFromFile(music.getCoverPath());
+            bitmap = loadCoverFromFile(music.getCoverPath()); //从下载的图片加载封面
         }
 
+        //对封面进行剪切和调整
         switch (type) {
             case ROUND:
                 bitmap = ImageUtils.resizeImage(bitmap, roundLength, roundLength);

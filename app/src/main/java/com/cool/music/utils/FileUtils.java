@@ -5,8 +5,12 @@ import android.text.TextUtils;
 
 import com.cool.music.R;
 import com.cool.music.application.AppCache;
+import com.cool.music.model.Music;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +60,32 @@ public class FileUtils {
         return getLrcDir() + File.separator + musicFileName.substring(0, musicFileName.lastIndexOf(".")) + LRC;
     }
 
+    /**
+     * 获取歌词路径<br>
+     * 先从已下载文件夹中查找，如果不存在，则从歌曲文件所在文件夹查找。
+     *
+     * @return 如果存在返回路径，否则返回null
+     */
+    public static String getLrcFilePath(Music music) {
+        if (music == null) {
+            return null;
+        }
+
+        String lrcFilePath = getLrcDir() + getLrcFileName(music.getArtist(), music.getTitle());
+        if (!exists(lrcFilePath)) {
+            lrcFilePath = music.getPath().replace(MP3, LRC);
+            if (!exists(lrcFilePath)) {
+                lrcFilePath = null;
+            }
+        }
+        return lrcFilePath;
+    }
+
+    private static boolean exists(String path) {
+        File file = new File(path);
+        return file.exists();
+    }
+
     public static String getAlbumFilePath(String musicFileName) {
         return getAlbumDir() + File.separator + musicFileName.substring(0, musicFileName.lastIndexOf("."));
     }
@@ -102,6 +132,17 @@ public class FileUtils {
             return album;
         } else {
             return artist + " - " + album;
+        }
+    }
+
+    public static void saveLrcFile(String path, String content) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+            bw.write(content);
+            bw.flush();
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,8 +16,11 @@ import android.widget.TextView;
 
 import com.cool.music.R;
 import com.cool.music.adapter.FragmentAdapter;
+import com.cool.music.constants.Extras;
+import com.cool.music.constants.Keys;
 import com.cool.music.executor.ControlPanel;
 import com.cool.music.fragment.LocalMusicFragment;
+import com.cool.music.fragment.PlayFragment;
 import com.cool.music.fragment.SheetListFragment;
 import com.cool.music.service.AudioPlayer;
 
@@ -35,7 +39,21 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private FrameLayout flPlayBar;
     private LocalMusicFragment mLocalMusicFragment;
     private SheetListFragment mSheetListFragment;
+    private PlayFragment mPlayFragment;
+    private boolean isPlayFragmentShow;
 
+
+
+    /**
+     * The bundle parameter in the onCreate() method, which can be used to restore the data is different
+     * from onRestoreInstanceSate() method. The onCreate() method can be used to restore the activity, because
+     * the savedInstanceSate parameter in onCreate() method is the data stored after the execution of
+     * savedInstanceState. However, the onCreate() method is executed before savedInstanceState() method,
+     * what's more, the savedInstanceState() method may not be executed, so it's necessary to judge null when
+     * using onCreate() method to restore. However, if onRestoreInstanceState() method is invoked, the Bundle
+     * parameter must not be null, and the parameter can be used directly.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +92,15 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         initViews();
         controlPanel = new ControlPanel(flPlayBar);
         AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);
+        parseIntent();
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
         if (position == 0) {
             tvLocalMusic.setSelected(true);
             tvOnlineMusic.setSelected(false);
@@ -88,13 +111,26 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onPageSelected(int position) {
+    public void onPageScrollStateChanged(int state) {
 
     }
 
-    @Override
-    public void onPageScrollStateChanged(int state) {
+    private void hidePlayingFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(0, R.anim.fragment_slide_down);
+        ft.hide(mPlayFragment);
+        ft.commitAllowingStateLoss();
+        isPlayFragmentShow = false;
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (mPlayFragment != null && isPlayFragmentShow) {
+            hidePlayingFragment();
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     @Override
@@ -112,7 +148,41 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
             case R.id.tv_online_music:
                 mViewPager.setCurrentItem(1);
                 break;
+            case R.id.fl_play_bar:
+                showPlayingFragment();
+                break;
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        parseIntent();
+    }
+
+    private void parseIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(Extras.EXTRA_NOTIFICATION)) {
+            showPlayingFragment();
+            setIntent(new Intent());
+        }
+    }
+
+    private void showPlayingFragment() {
+        if (isPlayFragmentShow) {
+            return;
+        }
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_slide_up, 0);
+        if (mPlayFragment == null) {
+            mPlayFragment = new PlayFragment();
+            ft.replace(android.R.id.content, mPlayFragment);
+        } else {
+            ft.show(mPlayFragment);
+        }
+        ft.commitAllowingStateLoss();
+        isPlayFragmentShow = true;
     }
 
     @Override
@@ -120,19 +190,55 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         return false;
     }
 
+    /**
+     * onRestoreInstanceState(Bundle savedInstanceState) will be invoked when the activity is actually
+     * recycled by the system and recreated. At this time, the parameter savedInstanceState must not be null,
+     * it is executed after the onStart() method. And the value is not null when read the savedInstanceSate in
+     * onRestoreInstanceState() method, but it may be null when the information stored in the Bundle then read
+     * read in onCreate().
+     * @param savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+        mViewPager.post(() -> {
+            mViewPager.setCurrentItem(savedInstanceState.getInt(Keys.VIEW_PAGER_INDEX), false);
+            mLocalMusicFragment.onRestoreInstanceState(savedInstanceState);
+            mSheetListFragment.onRestoreInstanceState(savedInstanceState);
+        });
     }
 
+    /**
+     * Activity will be destroyed under certain special circumstances, such as out of memory, or not invoke
+     * Process.killProcess on the main page, system.exit() and so on. Then system will create activity.
+     * onSaveInstanceState(Bundle outState) and onRestoreInstanceState(Bundle savedInstanceState) are
+     * used to save and restore data. When system resumes the destroyed activity, it will read the UI
+     * state information stored by onSaveInstanceState() method and restore the original UI.<br>
+     * The onSaveInstanceState method executes before the activity might be destroyed, saving UI state information
+     * that can be used for recovery after destroyed due to the exception. It will be invoked before putting the interface
+     * into the background or possibly being destroyed (between onPause and onStop), such as:
+     * 1. The screen is turned off. execution sequence: onPause() -> onSavedInstanceState() -> onStop()
+     * 2. Start a new activity from the current activity. execution sequence: onPause() -> onSavedInstanceState() -> onStop()
+     * 3. Switch screen direction. execution sequence: onPause() -> onSavedInstanceState() -> onStop() -> onDestroy() ->
+     *    onCreate() -> onStart() -> onRestoreInstanceState() -> onResume()
+     * notice: screen orientation toggle. when configChanges are set in AndroidMainfest.xml, it is sure that it can't be destroyed,
+     * so onSavedInstance(Bundle outState) will not be invoked.
+     * 4. User pressed the HOME button. execution sequence: onPause() -> onSavedInstanceState() -> onStop()
+     * However, in some cases it might not be invoked when it is sure that the activity would be destroyed, such as:
+     * 1. User pressed the return key.
+     * 2. Invoke finish() method to destroyed activity.
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(Keys.VIEW_PAGER_INDEX, mViewPager.getCurrentItem());
+        mLocalMusicFragment.onSaveInstanceState(outState);
+        mSheetListFragment.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         AudioPlayer.getInstance().removeOnPlayEventListener(controlPanel);
+        super.onDestroy();
     }
 }

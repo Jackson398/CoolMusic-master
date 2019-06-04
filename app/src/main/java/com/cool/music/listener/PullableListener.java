@@ -5,6 +5,7 @@ import android.os.Message;
 
 import com.cool.music.ui.PullToRefreshLayout;
 
+//设计有问题，需要改进
 public class PullableListener implements PullToRefreshLayout.OnPullableListener {
 
     @Override

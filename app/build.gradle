@@ -45,4 +45,5 @@ dependencies {
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
     compile 'org.greenrobot:eventbus:3.0.0'
     implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'me.wcy:lrcview:2.0.1'
 }

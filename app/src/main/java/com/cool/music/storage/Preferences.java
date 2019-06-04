@@ -11,6 +11,7 @@ public class Preferences {
 
     private static Context sContext;
     private static final String PLAY_POSITION = "play_position";
+    private static final String PLAY_MODE = "play_mode";
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
@@ -46,6 +47,14 @@ public class Preferences {
 
     private static boolean getBoolean(String key, boolean defValue) {
         return getPreferences().getBoolean(key, defValue);
+    }
+
+    public static void savePlayMode(int mode) {
+        saveInt(PLAY_MODE, mode);
+    }
+
+    public static int getPlayMode() {
+        return getInt(PLAY_MODE, 0);
     }
 
     public static void savePlayPosition(int position) {

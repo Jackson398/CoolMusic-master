@@ -73,6 +73,10 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".activity.SearchMusicActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Search"/>
+
+        <activity android:name=".activity.PlaylistActivity"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

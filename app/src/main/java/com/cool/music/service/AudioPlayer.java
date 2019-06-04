@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.cool.music.application.Notifier;
+import com.cool.music.enums.PlayModeEnum;
 import com.cool.music.model.Music;
 import com.cool.music.storage.DBManager;
 import com.cool.music.storage.Preferences;
@@ -14,10 +15,11 @@ import com.cool.music.utils.ToastUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AudioPlayer {
     private Context context;
-    private static volatile AudioPlayer instance;
+    private volatile static AudioPlayer instance;
 
     private static final int STATE_IDLE = 0; //闲置
     private static final int STATE_PREPARING = 1; //准备就绪
@@ -81,7 +83,65 @@ public class AudioPlayer {
     }
 
     public void next() {
+        if (musicList.isEmpty()) {
+            return;
+        }
 
+        PlayModeEnum mode = PlayModeEnum.valueOf(Preferences.getPlayMode());
+        switch (mode) {
+            case SHUFFLE:
+                play(new Random().nextInt(musicList.size()));
+                break;
+            case SINGLE:
+                play(getPlayPosition());
+                break;
+            case LOOP:
+            default:
+                play(getPlayPosition() + 1);
+                break;
+        }
+    }
+
+    public void prev() {
+        if (musicList.isEmpty()) {
+            return;
+        }
+
+        PlayModeEnum mode = PlayModeEnum.valueOf(Preferences.getPlayMode());
+        switch (mode) {
+            case SHUFFLE:
+                play(new Random().nextInt(musicList.size()));
+                break;
+            case SINGLE:
+                play(getPlayPosition());
+                break;
+            case LOOP:
+            default:
+                play(getPlayPosition() - 1);
+                break;
+        }
+    }
+
+    public void playPause() {
+        if (isPreparing()) {
+            stopPlayer();
+        } else if (isPlaying()) {
+            pausePlayer();
+        } else if (isPausing()) {
+            startPlayer();
+        } else {
+            play(getPlayPosition());
+        }
+    }
+
+    public void stopPlayer() {
+        if (isIdle()) {
+            return;
+        }
+
+        pausePlayer();
+        mediaPlayer.reset();
+        state = STATE_IDLE;
     }
 
     //获取音乐在播放列表中的位置
@@ -154,6 +214,40 @@ public class AudioPlayer {
         listeners.remove(listener);
     }
 
+    /**
+     * 跳转到指定的时间位置
+     *
+     * @param msec 时间
+     */
+    public void seekTo(int msec) {
+        if (isPlaying() || isPausing()) {
+            mediaPlayer.seekTo(msec);
+            MediaSessionManager.getInstance().updatePlaybackState();
+            for (OnPlayerEventListener listener : listeners) {
+                listener.onPublish(msec);
+            }
+        }
+    }
+
+    public void delete(int position) {
+        int playPosition = getPlayPosition();
+        Music music = musicList.remove(position);
+        DBManager.getInstance().getMusicDao().delete(music);
+        if (playPosition > position) {
+            setPlayPosition(playPosition - 1);
+        } else if (playPosition == position) {
+            if (isPlaying() || isPreparing()) {
+                setPlayPosition(playPosition - 1);
+                next();
+            } else {
+                stopPlayer();
+                for (OnPlayerEventListener listener : listeners) {
+                    listener.onChange(getPlayMusic());
+                }
+            }
+        }
+    }
+
     public boolean isPreparing() {
         return state == STATE_PREPARING;
     }
@@ -166,12 +260,16 @@ public class AudioPlayer {
         return state == STATE_PLAYING;
     }
 
-    public void startPlayer() {
+    public boolean isIdle() {
+        return state == STATE_IDLE;
+    }
+
+    public void  startPlayer() {
         if (!isPreparing() && !isPausing()) {
             return;
         }
 
-        if (audioFocusManager.requestAudioFocus()) {
+        if (audioFocusManager.requestAudioFocus()) { //获取焦点
             mediaPlayer.start();
             state = STATE_PLAYING;
             handler.post(mPublishRunnable); //发送消息到主线程消息循环系统，更新播放进度
@@ -181,6 +279,10 @@ public class AudioPlayer {
                 listener.onPlayerStart();
             }
         }
+    }
+
+    public List<Music> getMusicList() {
+        return musicList;
     }
 
     public Music getPlayMusic() {
@@ -207,9 +309,17 @@ public class AudioPlayer {
             return;
         }
 
-        mediaPlayer.pause();
+        mediaPlayer.pause(); //stop playing music
         state = STATE_PAUSE;
         handler.removeCallbacks(mPublishRunnable); //移除更新播放进度消息
+        //TODO
+        if (abandonAudioFocus) {
+            audioFocusManager.abandonAudioFocus(); //暂停音乐后失去焦点
+        }
+
+        for (OnPlayerEventListener listener : listeners) {
+            listener.onPlayerPause();
+        }
     }
 
     private void setPlayPosition(int position) {

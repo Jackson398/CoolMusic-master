@@ -7,7 +7,7 @@ import org.greenrobot.greendao.database.Database;
 public class DBManager {
     private static final String DB_NAME = "cool_music_db";
     private MusicDao musicDao;
-    private static volatile DBManager instance;
+    private volatile static DBManager instance;
 
     public static DBManager getInstance() {
         if (instance == null) {

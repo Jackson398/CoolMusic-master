@@ -15,6 +15,7 @@ import com.cool.music.activity.OnlineMusicActivity;
 import com.cool.music.adapter.SheetAdapter;
 import com.cool.music.application.AppCache;
 import com.cool.music.constants.Extras;
+import com.cool.music.constants.Keys;
 import com.cool.music.model.SheetInfo;
 
 import java.util.List;
@@ -75,7 +76,19 @@ public class SheetListFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        int position = lvPlaylist.getFirstVisiblePosition();
+        int offset = (lvPlaylist.getChildAt(0) == null) ? 0 : lvPlaylist.getChildAt(0).getTop();
+        outState.putInt(Keys.PLAYLIST_POSITION, position);
+        outState.putInt(Keys.PLAYLIST_OFFSET, offset);
         super.onSaveInstanceState(outState);
+    }
+
+    public void onRestoreInstanceState(final Bundle savedInstanceState) {
+        lvPlaylist.post(() -> {
+            int position = savedInstanceState.getInt(Keys.PLAYLIST_POSITION);
+            int offset = savedInstanceState.getInt(Keys.PLAYLIST_OFFSET);
+            lvPlaylist.setSelectionFromTop(position, offset);
+        });
     }
 
     @Override

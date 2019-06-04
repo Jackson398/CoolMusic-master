@@ -23,7 +23,7 @@ public class MediaSessionManager {
             | PlaybackStateCompat.ACTION_SEEK_TO;
 
     private PlayService playService;
-    private static volatile MediaSessionManager instance;
+    private volatile static MediaSessionManager instance;
     private MediaSessionCompat mediaSession;
 
     private MediaSessionManager() {

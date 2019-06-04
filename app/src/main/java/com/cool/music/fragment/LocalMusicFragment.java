@@ -32,6 +32,7 @@ import com.cool.music.activity.MusicInfoActivity;
 import com.cool.music.adapter.PlaylistAdapter;
 import com.cool.music.application.AppCache;
 import com.cool.music.application.WeChatOpenPlatform;
+import com.cool.music.constants.Keys;
 import com.cool.music.constants.RequestCode;
 import com.cool.music.listener.OnMoreClickListener;
 import com.cool.music.model.Music;
@@ -245,7 +246,18 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
+        int position = lvLocalMusic.getFirstVisiblePosition();
+        int offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
+        outState.putInt(Keys.LOCAL_MUSIC_POSITION, position);
+        outState.putInt(Keys.LOCAL_MUSIC_OFFSET, offset);
+    }
+
+    public void onRestoreInstanceState(final Bundle savedInstanceState) {
+        lvLocalMusic.post(() -> {
+            int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
+            int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
+            lvLocalMusic.setSelectionFromTop(position, offset);
+        });
     }
 
     @Override

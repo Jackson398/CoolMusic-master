@@ -13,3 +13,5 @@ public class MusicApplication extends Application {
         WeChatOpenPlatform.getInstance().init(this);
     }
 }
+
+

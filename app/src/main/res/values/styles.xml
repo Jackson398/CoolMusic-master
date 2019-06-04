@@ -3,13 +3,17 @@
     <style name="AppTheme" parent="AppBaseTheme" />
 
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/light_green</item>
+        <item name="colorPrimary">@color/light_green</item> <!--Status bar color-->
         <item name="colorPrimaryDark">@color/light_green</item>
         <item name="colorAccent">@color/light_green</item>
         <item name="playBarBackground">@drawable/play_bar_bg_selector</item>
     </style>
 
     <style name="AppTheme.Text" parent="TextAppearance.AppCompat" />
+
+    <style name="AppTheme.Search" parent="AppBaseTheme">
+        <item name="colorAccent">@color/white</item>
+    </style>
 
     <attr name="playBarBackground" format="reference" />
 

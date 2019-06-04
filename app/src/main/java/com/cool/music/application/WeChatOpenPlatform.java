@@ -13,7 +13,7 @@ public class WeChatOpenPlatform {
     private Context mContext;
     private IWXAPI wxAPI;
     public static final int IMAGE_SIZE=32768;//微信分享图片大小限制
-    private static volatile WeChatOpenPlatform instance;
+    private volatile static WeChatOpenPlatform instance;
 
     public WeChatOpenPlatform() {
     }

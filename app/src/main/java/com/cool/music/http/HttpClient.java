@@ -3,6 +3,7 @@ package com.cool.music.http;
 import android.support.annotation.NonNull;
 
 import com.cool.music.model.DownloadInfo;
+import com.cool.music.model.Lrc;
 import com.cool.music.model.OnlineMusicList;
 import com.cool.music.model.SearchMusic;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -123,6 +124,29 @@ public class HttpClient {
                 .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
                     @Override
                     public void onResponse(SearchMusic response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getLrc(String songId, @NonNull final HttpCallback<Lrc> callback) {
+        OkHttpUtils.get().url(BASE_URL)
+                .addParams(PARAM_METHOD, METHOD_LRC)
+                .addParams(PARAM_SONG_ID, songId)
+                .build()
+                .execute(new JsonCallback<Lrc>(Lrc.class) {
+                    @Override
+                    public void onResponse(Lrc response, int id) {
                         callback.onSuccess(response);
                     }
 

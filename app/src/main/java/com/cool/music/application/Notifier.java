@@ -13,7 +13,7 @@ public class Notifier {
      * thread is flushed into main memory before the lock is released, ensuring that other thread
      * enters, it read the latest variable contents in main memory.<br>
      * Assuming no keyword volatile situation, two threads A and B are both the first time to invoke this
-     * single method. Thread A instantiate the instance object firstly, the constructor is an atomic
+     * single method. Thread A instantiate the instance object firstly, the constructor is not an atomic
      * operation, it will generated many bytecode instruction after complied, for the Java reordering
      * of instructions. Then instantiate the instance object may be done at first(The actual operation
      * is only malloc memory area to storage object before return the memory reference), after instantiate
@@ -24,7 +24,7 @@ public class Notifier {
      * @see <a href="https://blog.csdn.net/xiakepan/article/details/52444565">
      *     Why do singleton double-checked locks need the volatile keyword</a>
      */
-    private static volatile Notifier instance;
+    private volatile static Notifier instance;
     private PlayService playService;
     private NotificationManager notificationManager;
 

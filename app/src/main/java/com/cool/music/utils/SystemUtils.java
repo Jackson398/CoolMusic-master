@@ -1,8 +1,10 @@
 package com.cool.music.utils;
 
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 public class SystemUtils {
 
@@ -23,5 +25,13 @@ public class SystemUtils {
     public static boolean isFlyme() {
         String flymeFlag = getSystemProperty("ro.build.display.id");
         return !TextUtils.isEmpty(flymeFlag) && flymeFlag.toLowerCase().contains("flyme");
+    }
+
+    public static String formatTime(String pattern, long milli) {
+        int m = (int) (milli / DateUtils.MINUTE_IN_MILLIS);
+        int s = (int) ((milli / DateUtils.SECOND_IN_MILLIS) % 60);
+        String mm = String.format(Locale.getDefault(), "%02d", m);
+        String ss = String.format(Locale.getDefault(), "%02d", s);
+        return pattern.replace("mm", mm).replace("ss", ss);
     }
 }

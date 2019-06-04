@@ -26,7 +26,7 @@ public class AppCache {
     private final List<Activity> mActivityStack = new ArrayList<Activity>();
     private final LongSparseArray<DownloadMusicInfo> mDownloadList = new LongSparseArray<DownloadMusicInfo>();
     private AMapLocalWeatherLive mAMapLocalWeatherLive;
-    private static AppCache instance;
+    private volatile static AppCache instance;
 
     public AppCache() {
 

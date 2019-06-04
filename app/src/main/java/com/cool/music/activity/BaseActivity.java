@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.cool.music.R;
 import com.cool.music.service.PlayService;
@@ -27,6 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setSystemBarTransparent();
         bindService();
     }
 
@@ -56,6 +60,30 @@ public abstract class BaseActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) { //当存在Toolbar，启用返回上一级
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    /** This method is used to set transparency of system status bar and realized immersive status bar.<br>
+     *
+     *  VERSION_CODES:LOLLIPOP
+     *  RELEASE DATE:2014.11
+     *  API LEVEL:21
+     *  ANDROID VERSION:5.0
+     *
+     * VERSION_CODES:KITKAT
+     * RELEASE DATE:2014.06
+     * API LEVEL:19
+     * ANDROID VERSION:4.4
+     *
+     * @see <a href="https://www.jianshu.com/p/830d0eb44a56">Android-SDK version number.</a>
+     */
+    private void setSystemBarTransparent() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
 
