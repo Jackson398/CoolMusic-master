@@ -178,6 +178,10 @@ public class CoverLoader {
         }
     }
 
+    public Bitmap resizeImage(final int width, final int height, Bitmap bitmap) {
+        return ImageUtils.createCircleImage(ImageUtils.resizeImage(bitmap, width, height));
+    }
+
     /**
      * 从下载的图片中加载封面<br>
      * 网络音乐

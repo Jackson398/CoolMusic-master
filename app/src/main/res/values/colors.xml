@@ -13,6 +13,7 @@
     <color name="red">#F44336</color>
     <color name="red_30p">#4CF44336</color>
     <color name="grey">#9E9E9E</color>
+    <color name="light_grey">#303030</color>
     <color name="grey_300">#E0E0E0</color>
     <color name="grey_300_96p">#F5E0E0E0</color>
     <color name="white_8p">#14FFFFFF</color>

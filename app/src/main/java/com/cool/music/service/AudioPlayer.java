@@ -1,6 +1,8 @@
 package com.cool.music.service;
 
 import android.content.Context;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,6 +10,7 @@ import android.os.Looper;
 import com.cool.music.application.Notifier;
 import com.cool.music.enums.PlayModeEnum;
 import com.cool.music.model.Music;
+import com.cool.music.receiver.NoisyAudioStreamReceiver;
 import com.cool.music.storage.DBManager;
 import com.cool.music.storage.Preferences;
 import com.cool.music.utils.ToastUtils;
@@ -32,6 +35,8 @@ public class AudioPlayer {
     private MediaPlayer mediaPlayer;
     private AudioFocusManager audioFocusManager;
     private Handler handler;
+    private NoisyAudioStreamReceiver noisyReceiver;
+    private IntentFilter noisyFilter;
     private final List<OnPlayerEventListener> listeners = new ArrayList<>();
 
     private Runnable mPublishRunnable = new Runnable() {
@@ -55,6 +60,8 @@ public class AudioPlayer {
         audioFocusManager = new AudioFocusManager(context);
         mediaPlayer = new MediaPlayer();
         handler = new Handler(Looper.getMainLooper());
+        noisyReceiver = new NoisyAudioStreamReceiver();
+        noisyFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         mediaPlayer.setOnCompletionListener(mp -> next()); //网络流媒体播放结束时回调
         mediaPlayer.setOnPreparedListener(mp -> { //当装载媒流体完毕时回调
             if (isPreparing()) {
@@ -194,9 +201,9 @@ public class AudioPlayer {
             for (OnPlayerEventListener listener : listeners) {
                 listener.onChange(music);
             }
-//            Notifier.getInstance().showPlay(music);
-//            MediaSessionManager.getInstance().updateMetaData(music);
-//            MediaSessionManager.getInstance().updatePlaybackState();
+            Notifier.getInstance().showPlay(music); //改变remoteView音乐播放状态
+            MediaSessionManager.getInstance().updateMetaData(music);
+            MediaSessionManager.getInstance().updatePlaybackState();
         } catch (IOException e) {
             e.printStackTrace();
             ToastUtils.show("当前歌曲无法播放");
@@ -273,8 +280,9 @@ public class AudioPlayer {
             mediaPlayer.start();
             state = STATE_PLAYING;
             handler.post(mPublishRunnable); //发送消息到主线程消息循环系统，更新播放进度
-            Notifier.getInstance().showPlay(getPlayMusic());
-
+            Notifier.getInstance().showPlay(getPlayMusic()); //改变remoteView音乐播放状态
+            MediaSessionManager.getInstance().updatePlaybackState();
+            context.registerReceiver(noisyReceiver, noisyFilter);
             for (OnPlayerEventListener listener : listeners) {
                 listener.onPlayerStart();
             }
@@ -312,6 +320,9 @@ public class AudioPlayer {
         mediaPlayer.pause(); //stop playing music
         state = STATE_PAUSE;
         handler.removeCallbacks(mPublishRunnable); //移除更新播放进度消息
+        Notifier.getInstance().showPause(getPlayMusic());
+        MediaSessionManager.getInstance().updatePlaybackState();
+        context.unregisterReceiver(noisyReceiver);
         //TODO
         if (abandonAudioFocus) {
             audioFocusManager.abandonAudioFocus(); //暂停音乐后失去焦点

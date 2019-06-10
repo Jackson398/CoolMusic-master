@@ -21,6 +21,7 @@ public class PlayService extends Service {
     public void onCreate() {
         super.onCreate();
         AudioPlayer.getInstance().init(this);
+        MediaSessionManager.getInstance().init(this);
         Notifier.getInstance().init(this);
     }
 
@@ -33,5 +34,11 @@ public class PlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void stop() {
+        AudioPlayer.getInstance().stopPlayer();
+        //todo
+        Notifier.getInstance().cancelAll();
     }
 }
