@@ -111,7 +111,7 @@ public class Notifier {
 
     private RemoteViews getRemoteViews(Context context, Music music, boolean isPlaying) {
         String title = music.getTitle();
-        String subtitle = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
+        String subtitle = music.getArtist();
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification);
         remoteViews.setTextViewText(R.id.tv_title, title);
@@ -130,7 +130,13 @@ public class Notifier {
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(context, 1, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setImageViewResource(R.id.iv_next, getNextIconRes(isLightNotificationTheme));
         remoteViews.setOnClickPendingIntent(R.id.iv_next, nextPendingIntent);
-        //TODO
+
+        Intent stopIntent = new Intent(StatusBarReceiver.ACTION_STATUS_BAR);
+        stopIntent.putExtra(StatusBarReceiver.EXTRA, StatusBarReceiver.EXTRA_PLAY_CLOSE);
+        PendingIntent stopPendingIntent = PendingIntent.getBroadcast(context, 2, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setImageViewResource(R.id.iv_close, getCloseIconRes(isLightNotificationTheme));
+        remoteViews.setOnClickPendingIntent(R.id.iv_close, stopPendingIntent);
+
         return remoteViews;
     }
 
@@ -151,6 +157,12 @@ public class Notifier {
         return isLightNotificationTheme
                 ? R.drawable.ic_status_bar_next_dark_selector
                 : R.drawable.ic_status_bar_next_light_selector;
+    }
+
+    private int getCloseIconRes(boolean isLightNotificationTheme) {
+        return isLightNotificationTheme
+                ? R.drawable.ic_status_bar_close_dark_selector
+                : R.drawable.ic_status_bar_close_light_selector;
     }
 
     private boolean isLightNotificationTheme(Context context) {

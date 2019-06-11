@@ -13,7 +13,7 @@
     <string name="load_fail">加载失败，请检查网络后重试</string>
     <string name="menu_setting">功能设置</string>
     <string name="menu_about">关于</string>
-    <string name="menu_night">夜间模式</string>
+    <string name="menu_theme">切换主题</string>
     <string name="menu_timer">定时停止播放</string>
     <string name="menu_exit">退出应用</string>
     <string name="local_music">本地音乐</string>
