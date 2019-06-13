@@ -63,7 +63,7 @@ public class PickerView<T> extends View {
 
     private int itemHeight;
     private int textSize;
-    private int textColor = Color.GREEN;
+    private int textColor = Color.BLACK;
     private Typeface typeface;
     private boolean isCyclic;
     private boolean autoFitSize;

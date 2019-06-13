@@ -2,6 +2,7 @@ package com.cool.music.utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,10 @@ public class TimerDialog extends Dialog implements View.OnClickListener {
             return this;
         }
 
+        private void initPickerView(PickerView view) {
+          //todo
+        }
+
         public TimerDialog create() {
             TextView positiveButton = (TextView) view.findViewById(R.id.positive_button);
             TextView negativeButton = (TextView) view.findViewById(R.id.negative_button);
@@ -65,6 +70,7 @@ public class TimerDialog extends Dialog implements View.OnClickListener {
             view.findViewById(R.id.timer_close_dialog).setOnClickListener(dialog);
             ((TextView)view.findViewById(R.id.dialog_title)).setText(R.string.timer_stop_time);
             mPicker = (PickerView) view.findViewById(R.id.timer_time_set);
+            initPickerView(mPicker);
             mPicker.setItems(Item.sampleItems(), item -> mValue = item.getText());
             int index = PickerUtils.indexOf(Item.sampleItems(), new Item(mValue));
             mPicker.setSelectedItemPosition(index >= 0 ? index : 0);
