@@ -12,6 +12,7 @@ public class Preferences {
     private static Context sContext;
     private static final String PLAY_POSITION = "play_position";
     private static final String PLAY_MODE = "play_mode";
+    private static final String TIMER_VALUE ="timer_value";
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
@@ -23,6 +24,14 @@ public class Preferences {
 
     public static String getFilterTime() {
         return getString(sContext.getString(R.string.setting_key_filter_time), "0");
+    }
+
+    public static String getTimerValue() {
+        return getString(TIMER_VALUE, "0");
+    }
+
+    public static void setTimerValue(String value) {
+        saveString(TIMER_VALUE, value);
     }
 
     public static int getPlayPosition() {
@@ -71,6 +80,10 @@ public class Preferences {
 
     private static void saveInt(String key, int value) {
         getPreferences().edit().putInt(key, value).apply();
+    }
+
+    private static void saveString(String key, String value) {
+        getPreferences().edit().putString(key, value).apply();
     }
 
     private static SharedPreferences getPreferences() {

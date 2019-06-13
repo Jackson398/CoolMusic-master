@@ -1,20 +1,32 @@
 <resources>
 
-    <style name="AppTheme" parent="AppBaseTheme" />
+    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar" />
 
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/light_green</item> <!--Status bar color-->
         <item name="colorPrimaryDark">@color/light_green</item>
         <item name="colorAccent">@color/light_green</item>
         <item name="playBarBackground">@drawable/play_bar_bg_selector</item>
+        <item name="timer_dialog_horizontal_line">@drawable/timer_dialog_horizontal_line</item>
+        <item name="timer_dialog_close">@drawable/dialog_close</item>
+        <item name="timer_dialog_button_divide">@drawable/timer_dialog_button_divide</item>
+        <item name="timer_dialog_bg">@drawable/dialog_light_bg</item>
+        <item name="timer_time_set_dialog_mask">@drawable/timer_time_set_picker_mask</item>
     </style>
 
     <style name="AppTheme.Text" parent="TextAppearance.AppCompat" />
 
-    <style name="AppTheme.Search" parent="AppBaseTheme">
+    <style name="AppTheme.Search" parent="LightTheme">
         <item name="colorAccent">@color/white</item>
     </style>
 
     <attr name="playBarBackground" format="reference" />
+
+    <style name="TimerDialog" parent="android:style/Theme.Dialog">
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
 
 </resources>

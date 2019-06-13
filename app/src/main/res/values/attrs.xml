@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="timer_dialog_horizontal_line" format="reference"/>
+    <attr name="timer_dialog_close" format="reference"/>
+    <attr name="timer_dialog_button_divide" format="reference"/>
+    <attr name="timer_dialog_bg" format="reference"/>
+    <attr name="timer_time_set_dialog_mask" format="reference"/>
+</resources>

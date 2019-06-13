@@ -2,6 +2,8 @@ package com.cool.music.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -19,14 +21,16 @@ import com.cool.music.adapter.FragmentAdapter;
 import com.cool.music.constants.Extras;
 import com.cool.music.constants.Keys;
 import com.cool.music.executor.ControlPanel;
+import com.cool.music.executor.NaviMenuExecutor;
 import com.cool.music.fragment.LocalMusicFragment;
 import com.cool.music.fragment.PlayFragment;
 import com.cool.music.fragment.SheetListFragment;
 import com.cool.music.service.AudioPlayer;
+import com.cool.music.service.QuitTimer;
 
 
 public class MusicActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
-         ViewPager.OnPageChangeListener {
+         ViewPager.OnPageChangeListener, QuitTimer.OnTimerListener {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -41,6 +45,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private SheetListFragment mSheetListFragment;
     private PlayFragment mPlayFragment;
     private boolean isPlayFragmentShow;
+    private NaviMenuExecutor naviMenuExecutor;
 
 
 
@@ -91,8 +96,17 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     protected void onServiceBound() {
         initViews();
         controlPanel = new ControlPanel(flPlayBar);
+        naviMenuExecutor = new NaviMenuExecutor(this);
         AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);
+        QuitTimer.getInstance().setOnTimerListener(this);
         parseIntent();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawerLayout.closeDrawers();
+        handler.postDelayed(() -> item.setChecked(false), 500); //restored unselected state
+        return naviMenuExecutor.onNavigationItemSelected(item);
     }
 
     @Override
@@ -186,8 +200,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+    public void onTimer(long remain) {
+        //todo
     }
 
     /**
@@ -239,6 +253,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onDestroy() {
         AudioPlayer.getInstance().removeOnPlayEventListener(controlPanel);
+        QuitTimer.getInstance().setOnTimerListener(null);
         super.onDestroy();
     }
 }

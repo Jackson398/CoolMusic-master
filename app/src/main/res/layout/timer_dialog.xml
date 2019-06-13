@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/rl_dialog_background"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:background="?attr/timer_dialog_bg">
+
+        <LinearLayout
+            android:id="@+id/ll_context"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="clip_horizontal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/timer_close_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/timer_dialog_close"/>
+
+            <TextView
+                android:id="@+id/dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="plagiata"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/up_divide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_context"
+            android:src="?attr/timer_dialog_horizontal_line"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/up_divide"
+            android:layout_above="@+id/down_divide"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical">
+
+                <com.cool.music.widget.PickerView
+                    android:id="@+id/timer_time_set"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:isCyclic="true"/>
+
+                <!--<View-->
+                    <!--android:id="@+id/diagnosis_dialog_mask"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="?attr/timer_time_set_dialog_mask" />-->
+            </RelativeLayout>
+
+            <!--<TextView-->
+                <!--android:id="@+id/timer_time_set_description"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:fontFamily="plagiata"-->
+                <!--android:paddingTop="1dp"-->
+                <!--android:text="@string/timer_time_set_description" />-->
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/down_divide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ll_button"
+            android:src="?attr/timer_dialog_horizontal_line"/>
+
+        <LinearLayout
+            android:id="@+id/ll_button"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layoutDirection="locale"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/positive_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17sp"/>
+
+            <ImageView
+                android:id="@+id/timer_button_divide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="?attr/timer_dialog_button_divide"/>
+            <TextView
+                android:id="@+id/negative_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="17sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

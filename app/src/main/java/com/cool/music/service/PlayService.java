@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 
 import com.cool.music.application.Notifier;
 import com.cool.music.constants.Actions;
@@ -15,7 +16,7 @@ import com.cool.music.constants.Actions;
  * runs in a separate progress(unless otherwise specified). This means that if the service will perform
  * any cpu-intensive or blocking operation. (such as mp3 player or networking), a new thread should be
  * created within the service to do the job. By using separate threads, the risk of a "ANR" exception is
- * reduced, while the main thread of tje application continues to focus on running user-activity
+ * reduced, while the main thread of the application continues to focus on running user-activity
  * interactions.
  */
 public class PlayService extends Service {
@@ -36,6 +37,7 @@ public class PlayService extends Service {
         AudioPlayer.getInstance().init(this);
         MediaSessionManager.getInstance().init(this);
         Notifier.getInstance().init(this);
+        QuitTimer.getInstance().init(this);
     }
 
     @Nullable
@@ -47,7 +49,8 @@ public class PlayService extends Service {
     /**
      * The method use Intent to start service, that {@link #onStartCommand(Intent, int, int)} will be
      * called. the method called by {@link com.cool.music.receiver.StatusBarReceiver#onReceive(Context, Intent)}
-     * to stop service while you click close icon in network push notification.
+     *  or {@link com.cool.music.executor.NaviMenuExecutor#onNavigationItemSelected(MenuItem)} to stop service
+     *  while you click close icon in network push notification or exit item in navigation.
      * @param context
      * @param action
      */

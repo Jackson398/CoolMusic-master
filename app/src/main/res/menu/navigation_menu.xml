@@ -6,8 +6,8 @@
             android:icon="@mipmap/ic_menu_settings"
             android:title="@string/menu_setting" />
         <item
-            android:id="@+id/action_night"
-            android:icon="@mipmap/ic_menu_night"
+            android:id="@+id/action_theme"
+            android:icon="@mipmap/ic_menu_theme"
             android:title="@string/menu_theme" />
         <item
             android:id="@+id/action_timer"
