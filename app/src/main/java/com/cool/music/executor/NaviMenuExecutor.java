@@ -1,11 +1,13 @@
 package com.cool.music.executor;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.cool.music.R;
 import com.cool.music.activity.MusicActivity;
+import com.cool.music.activity.SettingActivity;
 import com.cool.music.constants.Actions;
 import com.cool.music.service.PlayService;
 import com.cool.music.service.QuitTimer;
@@ -27,7 +29,7 @@ public class NaviMenuExecutor {
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_setting:
-                //todo
+                startActivity(SettingActivity.class);
                 return true;
             case R.id.action_theme:
                 //todo
@@ -45,6 +47,11 @@ public class NaviMenuExecutor {
 
         }
         return false;
+    }
+
+    private void startActivity(Class<?> cls) {
+        Intent intent = new Intent(activity, cls);
+        activity.startActivity(intent);
     }
 
     /**

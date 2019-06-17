@@ -44,12 +44,17 @@
     <string name="no_permission_storage">没有存储空间权限，无法扫描本地歌曲！</string>
     <string name="no_permission_download">没有存储空间权限，无法下载在线音乐！</string>
     <string name="no_permission_setting">没有权限，无法设置铃声，请授予权限</string>
+    <string name="no_permission_location">没有位置信息权限，无法更新天气！</string>
     <string name="grant_permission_setting">授权成功，请在再次操作以设置铃声</string>
     <string name="mode_loop">列表循环</string>
     <string name="mode_shuffle">随机播放</string>
     <string name="mode_one">单曲循环</string>
     <string name="timer_time_set_description">分钟后停止</string>
     <string name="timer_stop_time">停止时间</string>
+    <string name="network">联网相关</string>
+    <string name="mobile_network_play">使用移动网络播放</string>
+    <string name="mobile_network_download">使用移动网络下载</string>
+    <string name="system_setting">系统设置</string>
     <string name="play_time_start">00:00</string>
 
     <string name="song_list_item_title_1">1.%1$s - %2$s</string>
@@ -60,6 +65,9 @@
     <string name="now_download">正在下载：%s</string>
     <string name="download_success">%s下载完成</string>
     <string name="delete_music">删除%s？</string>
+
+    <string name="weather_temp">%s°</string>
+    <string name="weather_wind">%1$s风%2$s级&#160;&#160;湿度%3$s%%</string>
 
     <string name="default_tv_title">百度热歌榜</string>
     <string name="default_tv_update_date">最近更新：2016-01-03</string>

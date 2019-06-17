@@ -1,15 +1,15 @@
 package com.cool.music.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,11 +22,14 @@ import com.cool.music.constants.Extras;
 import com.cool.music.constants.Keys;
 import com.cool.music.executor.ControlPanel;
 import com.cool.music.executor.NaviMenuExecutor;
+import com.cool.music.executor.WeatherExecutor;
 import com.cool.music.fragment.LocalMusicFragment;
 import com.cool.music.fragment.PlayFragment;
 import com.cool.music.fragment.SheetListFragment;
 import com.cool.music.service.AudioPlayer;
 import com.cool.music.service.QuitTimer;
+import com.cool.music.utils.PermissionReq;
+import com.cool.music.utils.ToastUtils;
 
 
 public class MusicActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -46,8 +49,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private PlayFragment mPlayFragment;
     private boolean isPlayFragmentShow;
     private NaviMenuExecutor naviMenuExecutor;
-
-
+    private View vNavigationHeader;
 
     /**
      * The bundle parameter in the onCreate() method, which can be used to restore the data is different
@@ -66,8 +68,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void initViews() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // add navigation header
+        vNavigationHeader = LayoutInflater.from(this).inflate(R.layout.navigation_header, navigationView, false);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.addHeaderView(vNavigationHeader);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ivMenu = (ImageView) findViewById(R.id.iv_menu);
         ivSearch = (ImageView) findViewById(R.id.iv_search);
         tvLocalMusic = (TextView) findViewById(R.id.tv_local_music);
@@ -95,11 +101,30 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onServiceBound() {
         initViews();
+        updateWeather();
         controlPanel = new ControlPanel(flPlayBar);
         naviMenuExecutor = new NaviMenuExecutor(this);
         AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);
         QuitTimer.getInstance().setOnTimerListener(this);
         parseIntent();
+    }
+
+    private void updateWeather() {
+        PermissionReq.with(this)
+                .permissions(Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                .result(new PermissionReq.Result() {
+                    @Override
+                    public void onGranted() {
+                        new WeatherExecutor(MusicActivity.this, vNavigationHeader).execute();
+                    }
+
+                    @Override
+                    public void onDenied() {
+                        ToastUtils.show(R.string.no_permission_location);
+                    }
+                })
+                .request();
     }
 
     @Override
