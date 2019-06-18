@@ -3,13 +3,16 @@ package com.cool.music.http;
 import android.support.annotation.NonNull;
 
 import com.cool.music.model.DownloadInfo;
+import com.cool.music.model.LiveWeather;
 import com.cool.music.model.Lrc;
 import com.cool.music.model.OnlineMusicList;
 import com.cool.music.model.SearchMusic;
+import com.cool.music.model.TimeWeather;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -30,6 +33,16 @@ public class HttpClient {
     private static final String PARAM_SONG_ID = "songid";
     private static final String PARAM_TING_UID = "tinguid";
     private static final String PARAM_QUERY = "query";
+
+    public static final String WEATHER_TYPE_BASE = "base";
+    public static final String WEATHER_TYPE_ALL = "all";
+    private static final String WEATHER_URL = "http://restapi.amap.com/v3/weather/weatherInfo";
+    private static final String KEY = "key";
+    private static final String CITY = "city";
+    private static final String EXTENSIONS = "extensions";
+    private static final String OUTPUT = "output";
+    private static final String OUTPUT_FORMAT = "JSON";
+    private static final String KEY_VALUE = "";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -153,6 +166,57 @@ public class HttpClient {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+
+    public static void getLiveWeather(String adcode, String type, final HttpCallback<LiveWeather> callback) {
+        OkHttpUtils.get().url(WEATHER_URL)
+                .addParams(KEY, KEY_VALUE)
+                .addParams(CITY, adcode)
+                .addParams(EXTENSIONS, type)
+                .addParams(OUTPUT, OUTPUT_FORMAT)
+                .build()
+                .execute(new JsonCallback<LiveWeather>(LiveWeather.class) {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onResponse(LiveWeather response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getTimeWeather(String adcode, String type, final HttpCallback<TimeWeather> callback) {
+        OkHttpUtils.get().url(WEATHER_URL)
+                .addParams(KEY, KEY_VALUE)
+                .addParams(CITY, adcode)
+                .addParams(EXTENSIONS, type)
+                .addParams(OUTPUT, OUTPUT_FORMAT)
+                .build()
+                .execute(new JsonCallback<TimeWeather>(TimeWeather.class) {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onResponse(TimeWeather response, int id) {
+                        callback.onSuccess(response);
                     }
 
                     @Override

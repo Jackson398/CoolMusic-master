@@ -13,6 +13,8 @@ public class Preferences {
     private static final String PLAY_POSITION = "play_position";
     private static final String PLAY_MODE = "play_mode";
     private static final String TIMER_VALUE ="timer_value";
+    private static final String ADCODE = "adcode"; //regional code
+    private static final String CITYNAME = "city"; //city name
 
     public static void init(Context context) {
         sContext = context.getApplicationContext();
@@ -24,6 +26,22 @@ public class Preferences {
 
     public static String getFilterTime() {
         return getString(sContext.getString(R.string.setting_key_filter_time), "0");
+    }
+
+    public static String getAdcode() {
+        return getString(ADCODE, "");
+    }
+
+    public static void saveAdcode(String value) {
+        saveString(ADCODE, value);
+    }
+
+    public static String getCityName() {
+        return getString(CITYNAME, "");
+    }
+
+    public static void saveCityName(String value) {
+        saveString(CITYNAME, value);
     }
 
     public static String getTimerValue() {

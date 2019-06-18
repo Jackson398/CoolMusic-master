@@ -1,20 +1,18 @@
 package com.cool.music.executor;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.cool.music.R;
 import com.cool.music.activity.MusicActivity;
 import com.cool.music.activity.SettingActivity;
+import com.cool.music.activity.SplashWeatherActivity;
 import com.cool.music.constants.Actions;
 import com.cool.music.service.PlayService;
 import com.cool.music.service.QuitTimer;
 import com.cool.music.storage.Preferences;
 import com.cool.music.utils.TimerDialog;
-
-import java.sql.Time;
 
 /**
  * Navigation menu executor
@@ -33,6 +31,9 @@ public class NaviMenuExecutor {
                 return true;
             case R.id.action_theme:
                 //todo
+                return true;
+            case R.id.action_weather:
+                startActivity(SplashWeatherActivity.class);
                 return true;
             case R.id.action_timer:
                 timerDialog();

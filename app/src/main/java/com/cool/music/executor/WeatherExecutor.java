@@ -128,7 +128,7 @@ public class WeatherExecutor implements IExecutor, AMapLocalWeatherListener {
 
     @Override
     public void onPrepare() {
-
+        new LocationExecutor(mContext).execute();
     }
 
     @Override
