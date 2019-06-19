@@ -42,7 +42,7 @@ public class HttpClient {
     private static final String EXTENSIONS = "extensions";
     private static final String OUTPUT = "output";
     private static final String OUTPUT_FORMAT = "JSON";
-    private static final String KEY_VALUE = "";
+    private static final String KEY_VALUE = "7c3cc2df97d7fe15f13db8444888949c";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

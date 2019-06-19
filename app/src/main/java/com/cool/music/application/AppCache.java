@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 
-import com.amap.api.location.AMapLocalWeatherLive;
 import com.cool.music.executor.DownloadMusicInfo;
 import com.cool.music.model.Music;
 import com.cool.music.model.SheetInfo;
@@ -25,7 +24,7 @@ public class AppCache {
     private final List<SheetInfo> mShellList = new ArrayList<SheetInfo>();
     private final List<Activity> mActivityStack = new ArrayList<Activity>();
     private final LongSparseArray<DownloadMusicInfo> mDownloadList = new LongSparseArray<DownloadMusicInfo>();
-    private AMapLocalWeatherLive mAMapLocalWeatherLive;
+//    private AMapLocalWeatherLive mAMapLocalWeatherLive;
     private volatile static AppCache instance;
 
     public AppCache() {
@@ -83,13 +82,13 @@ public class AppCache {
         return mDownloadList;
     }
 
-    public AMapLocalWeatherLive getAMapLocalWeatherLive() {
-        return mAMapLocalWeatherLive;
-    }
-
-    public void setAMapLocalWeatherLive(AMapLocalWeatherLive aMapLocalWeatherLive) {
-        mAMapLocalWeatherLive = aMapLocalWeatherLive;
-    }
+//    public AMapLocalWeatherLive getAMapLocalWeatherLive() {
+//        return mAMapLocalWeatherLive;
+//    }
+//
+//    public void setAMapLocalWeatherLive(AMapLocalWeatherLive aMapLocalWeatherLive) {
+//        mAMapLocalWeatherLive = aMapLocalWeatherLive;
+//    }
 
     /**
      * 接口回调简化监测Activity的生命周期，在一个类中作统一处理.

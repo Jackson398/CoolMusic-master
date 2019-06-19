@@ -10,7 +10,18 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [AMAP_KEY: getLocalValue("AMAP_KEY")]
     }
+
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('D:/platform.keystore')
+            storePassword 'android'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -27,6 +38,20 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+}
+
+def getLocalValue(String key) {
+    return getLocalValue(key, false)
+}
+
+def getLocalValue(String key, boolean quot) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def value = properties.containsKey(key) ? properties.get(key) : ""
+    if (quot) {
+        value = "\"" + value + "\""
+    }
+    return value
 }
 
 dependencies {

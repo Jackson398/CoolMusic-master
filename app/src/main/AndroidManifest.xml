@@ -56,10 +56,10 @@
             </intent-filter>
         </receiver>
 
+        <service android:name="com.amap.api.location.APSService"/>
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="8ddb342f2da5408402d7568af21e29f9"/>
-            <!--android:value="3c3e99616cd8697c4b4b2aef22858a78" />-->
+            android:value="${AMAP_KEY}"/>
 
         <service android:name=".service.PlayService"/>
 
@@ -93,5 +93,12 @@
             android:label="@string/menu_setting"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activity.SplashWeatherActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.WeatherActivity"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

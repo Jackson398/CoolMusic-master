@@ -21,14 +21,36 @@
             android:id="@+id/tv_weather_main_header_label"
             android:textSize="@dimen/text_size_common"
             android:textColor="@color/white"
-            android:text="深圳市 南山区"/>
+            android:text="深圳市 南山区" />
+
+        <AutoCompleteTextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:hint="@string/search_location"
+            android:textSize="@dimen/text_size_common"
+            android:textColor="@color/white"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:visibility="gone"
+            android:id="@+id/tv_select_city"/>
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="切换"
             android:background="#00000000"
             android:textColor="@color/white"
-            android:id="@+id/change_btn"/>
+            android:id="@+id/change_location_btn" />
+
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="end"
+            android:contentDescription="@null"
+            android:scaleType="centerInside"
+            android:src="@mipmap/ic_menu_search"
+            android:visibility="gone"/>
     </LinearLayout>
     <ScrollView
         android:id="@+id/main_scrollview"

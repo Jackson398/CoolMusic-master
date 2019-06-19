@@ -14,7 +14,8 @@
     <string name="menu_setting">功能设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_theme">切换主题</string>
-    <string name="menu_weather">今日天气</string>
+    <string name="menu_weather">查询天气</string>
+    <string name="search_location">搜索地址</string>
     <string name="menu_timer">定时停止播放</string>
     <string name="menu_exit">退出应用</string>
     <string name="local_music">本地音乐</string>

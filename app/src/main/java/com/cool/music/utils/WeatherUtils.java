@@ -1,8 +1,13 @@
 package com.cool.music.utils;
 
+import android.text.TextUtils;
+
 import com.cool.music.R;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class WeatherUtils {
     public static HashMap<String,Integer> WeatherKV = new HashMap<>();
@@ -147,5 +152,88 @@ public class WeatherUtils {
         weatherDirection.put("7","西北风");
         weatherDirection.put("8","北风");
         weatherDirection.put("9","N/A");
+    }
+
+    public static int getWeatherIcon(String weather) {
+        if (TextUtils.isEmpty(weather)) {
+            return R.mipmap.ic_weather_sunny;
+        }
+
+        if (weather.contains("-")) {
+            weather = weather.substring(0, weather.indexOf("-"));
+        }
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int resId;
+        if (weather.contains("晴")) {
+            if (hour >= 7 && hour < 19) {
+                resId = R.mipmap.ic_weather_sunny;
+            } else {
+                resId = R.mipmap.ic_weather_sunny_night;
+            }
+        } else if (weather.contains("多云")) {
+            if (hour >= 7 && hour < 19) {
+                resId = R.mipmap.ic_weather_cloudy;
+            } else {
+                resId = R.mipmap.ic_weather_cloudy_night;
+            }
+        } else if (weather.contains("阴")) {
+            resId = R.mipmap.ic_weather_overcast;
+        } else if (weather.contains("雷阵雨")) {
+            resId = R.mipmap.ic_weather_thunderstorm;
+        } else if (weather.contains("雨夹雪")) {
+            resId = R.mipmap.ic_weather_sleet;
+        } else if (weather.contains("雨")) {
+            resId = R.mipmap.ic_weather_rain;
+        } else if (weather.contains("雪")) {
+            resId = R.mipmap.ic_weather_snow;
+        } else if (weather.contains("雾") || weather.contains("霾")) {
+            resId = R.mipmap.ic_weather_foggy;
+        } else if (weather.contains("风") || weather.contains("飑")) {
+            resId = R.mipmap.ic_weather_typhoon;
+        } else if (weather.contains("沙") || weather.contains("尘")) {
+            resId = R.mipmap.ic_weather_sandstorm;
+        } else {
+            resId = R.mipmap.ic_weather_cloudy;
+        }
+        return resId;
+    }
+
+    public static List<Integer> getCities() {
+        List<Integer> cities = new ArrayList<>();
+        cities.add(R.raw.anhui);
+        cities.add(R.raw.aomeng);
+        cities.add(R.raw.beijin);
+        cities.add(R.raw.chongqing);
+        cities.add(R.raw.fujiang);
+        cities.add(R.raw.gangsu);
+        cities.add(R.raw.guangdong);
+        cities.add(R.raw.guangxi);
+        cities.add(R.raw.guizhou);
+        cities.add(R.raw.hainang);
+        cities.add(R.raw.hebei);
+        cities.add(R.raw.heilongjiang);
+        cities.add(R.raw.henang);
+        cities.add(R.raw.hongkong);
+        cities.add(R.raw.hubei);
+        cities.add(R.raw.hunang);
+        cities.add(R.raw.jiangsu);
+        cities.add(R.raw.jiangxi);
+        cities.add(R.raw.jiling);
+        cities.add(R.raw.liaoning);
+        cities.add(R.raw.neimenggu);
+        cities.add(R.raw.ningxia);
+        cities.add(R.raw.qinghai);
+        cities.add(R.raw.shangdong);
+        cities.add(R.raw.shanghai);
+        cities.add(R.raw.shangxi);
+        cities.add(R.raw.shanxi);
+        cities.add(R.raw.sichuang);
+        cities.add(R.raw.tianjin);
+        cities.add(R.raw.xinjiang);
+        cities.add(R.raw.xizan);
+        cities.add(R.raw.yunnang);
+        cities.add(R.raw.zhejiang);
+
+        return cities;
     }
 }

@@ -22,7 +22,6 @@ import com.cool.music.constants.Extras;
 import com.cool.music.constants.Keys;
 import com.cool.music.executor.ControlPanel;
 import com.cool.music.executor.NaviMenuExecutor;
-import com.cool.music.executor.WeatherExecutor;
 import com.cool.music.fragment.LocalMusicFragment;
 import com.cool.music.fragment.PlayFragment;
 import com.cool.music.fragment.SheetListFragment;
@@ -116,7 +115,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 .result(new PermissionReq.Result() {
                     @Override
                     public void onGranted() {
-                        new WeatherExecutor(MusicActivity.this, vNavigationHeader).execute();
+                        Intent intent = new Intent(MusicActivity.this, SplashWeatherActivity.class);
+                        startActivity(intent);
                     }
 
                     @Override
