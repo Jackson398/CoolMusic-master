@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,14 +26,13 @@ import com.cool.music.executor.ShareOnlineMusic;
 import com.cool.music.http.HttpCallback;
 import com.cool.music.http.HttpClient;
 import com.cool.music.listener.OnMoreClickListener;
-import com.cool.music.listener.PullableListener;
 import com.cool.music.model.Music;
 import com.cool.music.model.OnlineMusic;
 import com.cool.music.model.OnlineMusicList;
 import com.cool.music.model.SheetInfo;
 import com.cool.music.service.AudioPlayer;
-import com.cool.music.widget.PullableListView;
-import com.cool.music.ui.PullToRefreshLayout;
+import com.cool.music.utils.ScreenUtils;
+import com.cool.music.widget.AutoLoadListView;
 import com.cool.music.utils.FileUtils;
 import com.cool.music.utils.ImageUtils;
 import com.cool.music.utils.PermissionReq;
@@ -42,15 +43,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnlineMusicActivity extends BaseActivity implements PullableListView.OnLoadListener, OnMoreClickListener, AdapterView.OnItemClickListener {
+public class OnlineMusicActivity extends BaseActivity implements OnMoreClickListener,
+        AdapterView.OnItemClickListener, AutoLoadListView.OnLoadListener {
 
     private static final int MUSIC_LIST_SIZE = 20;
-    private PullableListView mList;
-    private PullToRefreshLayout ptrl;
+    private AutoLoadListView lvOnlineMusic;
     private SheetInfo mListInfo;
     private LinearLayout llLoading;
     private LinearLayout llLoadFail;
-    private LinearLayout llOnLineMusic;
     private OnlineMusicList mOnlineMusicList;
     private View vHeader;
     private List<OnlineMusic> mMusicList = new ArrayList<>();
@@ -73,28 +73,18 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
     }
 
     private void initListView() {
-        ptrl = ((PullToRefreshLayout) findViewById(R.id.pull_down_refresh_pull_up_load_layout));
-        mList = (PullableListView) findViewById(R.id.content_view);
+        lvOnlineMusic = (AutoLoadListView) findViewById(R.id.lv_online_music_list);
         llLoading = (LinearLayout) findViewById(R.id.ll_loading);
         llLoadFail = (LinearLayout) findViewById(R.id.ll_load_fail);
-        llOnLineMusic = (LinearLayout) findViewById(R.id.ll_online_music);
-        vHeader = LayoutInflater.from(this).inflate(R.layout.activity_online_music_list_header, llOnLineMusic);
-        ViewUtils.changeViewState(llOnLineMusic, llLoading, llLoadFail, LoadStateEnum.LOADING);
-        ptrl.setOnPullableListener(new PullableListener() {
-            @Override
-            protected void loadPullableList() {
-                getMusic(mOffset);
-            }
-
-            @Override
-            protected void refreshPullableList() {
-                mMusicList.clear();
-                getMusic(mOffset);
-            }
-        });
-        mList.setOnItemClickListener(this);
+        AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(150));
+        vHeader = LayoutInflater.from(this).inflate(R.layout.activity_online_music_list_header, null);
+        vHeader.setLayoutParams(params);
+        lvOnlineMusic.addHeaderView(vHeader, null, false);
+        ViewUtils.changeViewState(lvOnlineMusic, llLoading, llLoadFail, LoadStateEnum.LOADING);
+        lvOnlineMusic.setOnItemClickListener(this);
+        lvOnlineMusic.setOnLoadListener(this);
         mAdapter.setOnMoreClickListener(this);
-        mList.setAdapter(mAdapter);
+        lvOnlineMusic.setAdapter(mAdapter);
     }
 
     @Override
@@ -130,8 +120,6 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
                     }
                 });
     }
-
-
 
     @Override
     public void onMoreClick(int position) {
@@ -268,17 +256,17 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
         HttpClient.getSongListInfo(mListInfo.getType(), MUSIC_LIST_SIZE, offset, new HttpCallback<OnlineMusicList>() {
             @Override
             public void onSuccess(OnlineMusicList response) {
-                mList.onLoadComplete();
+                lvOnlineMusic.onLoadComplete();
                 mOnlineMusicList = response; //从服务器上获取的音乐信息
                 if (offset == 0 && response == null) {
-                    ViewUtils.changeViewState(llOnLineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FALIED);
+                    ViewUtils.changeViewState(lvOnlineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FALIED);
                     return;
                 } else if (offset == 0) {
                     initHeader(); //初始化头部信息
-                    ViewUtils.changeViewState(llOnLineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESSED);
+                    ViewUtils.changeViewState(lvOnlineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESSED);
                 }
                 if (response == null || response.getSong_list() == null || response.getSong_list().size() == 0) {
-                    llOnLineMusic.setEnabled(false);
+                    lvOnlineMusic.setEnabled(false);
                     return;
                 }
                 mOffset += MUSIC_LIST_SIZE;
@@ -288,14 +276,14 @@ public class OnlineMusicActivity extends BaseActivity implements PullableListVie
 
             @Override
             public void onFail(Exception e) {
-                mList.onLoadComplete();
+                lvOnlineMusic.onLoadComplete();
                 if (e instanceof RuntimeException) {
                     //歌曲全部加载完成
-                    mList.setEnabled(false);
+                    lvOnlineMusic.setEnabled(false);
                     return;
                 }
                 if (offset == 0) {
-                    ViewUtils.changeViewState(llOnLineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FALIED);
+                    ViewUtils.changeViewState(lvOnlineMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FALIED);
                 } else {
 
                 }

@@ -32,6 +32,9 @@ public class NaviMenuExecutor {
             case R.id.action_setting:
                 startActivity(SettingActivity.class);
                 return true;
+            case R.id.action_night:
+                nightMode();
+                return true;
             case R.id.action_theme:
                 //todo
                 return true;
@@ -51,6 +54,11 @@ public class NaviMenuExecutor {
 
         }
         return false;
+    }
+
+    private void nightMode() {
+        Preferences.saveNightMode(!Preferences.isNightMode());
+        activity.recreate();
     }
 
     private void updateWeather() {

@@ -219,6 +219,8 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
                     Preferences.saveCityName(selectName);
                     adcode = selectCode;
                     cityName = selectName;
+                    tvHeader.setText(cityName);
+                    llWeatherInfo.removeViews(2, 4);
                     updateView();
                 }else {
                     //todo

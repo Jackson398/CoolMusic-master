@@ -37,6 +37,7 @@ public class SplashWeatherActivity extends Activity implements AMapLocationListe
                 intent.putExtra(ADCODE, adcode);
                 intent.putExtra(CITYNAME, cityName);
                 startActivity(intent);
+                finish();
             }, 1000);
             return;
         }
@@ -109,7 +110,6 @@ public class SplashWeatherActivity extends Activity implements AMapLocationListe
 
     @Override
     protected void onDestroy() {
-        mLocationClient.setLocationListener(null);
         super.onDestroy();
     }
 }

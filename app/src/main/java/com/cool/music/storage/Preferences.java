@@ -13,6 +13,7 @@ public class Preferences {
     private static final String PLAY_POSITION = "play_position";
     private static final String PLAY_MODE = "play_mode";
     private static final String TIMER_VALUE ="timer_value";
+    private static final String NIGHT_MODE = "night_mode";
     private static final String ADCODE = "adcode"; //regional code
     private static final String CITYNAME = "city"; //city name
 
@@ -26,6 +27,14 @@ public class Preferences {
 
     public static String getFilterTime() {
         return getString(sContext.getString(R.string.setting_key_filter_time), "0");
+    }
+
+    public static void saveNightMode(boolean on) {
+        saveBoolean(NIGHT_MODE, on);
+    }
+
+    public static boolean isNightMode() {
+        return getBoolean(NIGHT_MODE, false);
     }
 
     public static String getAdcode() {

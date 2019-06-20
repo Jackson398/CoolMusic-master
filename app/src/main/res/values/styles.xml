@@ -29,4 +29,13 @@
         <item name="android:windowIsFloating">true</item>
     </style>
 
+    <style name="AppThemeDark" parent="AppBaseThemeDark" />
+
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/grey_900</item>
+        <item name="colorPrimaryDark">@color/grey_900</item>
+        <item name="colorAccent">@color/grey_900</item>
+        <item name="playBarBackground">@drawable/play_bar_bg_selector_dark</item>
+    </style>
+
 </resources>

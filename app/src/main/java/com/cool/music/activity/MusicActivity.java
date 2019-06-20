@@ -64,14 +64,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-    }
 
-    private void initViews() {
         // add navigation header
         vNavigationHeader = LayoutInflater.from(this).inflate(R.layout.navigation_header, navigationView, false);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.addHeaderView(vNavigationHeader);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ivMenu = (ImageView) findViewById(R.id.iv_menu);
         ivSearch = (ImageView) findViewById(R.id.iv_search);
@@ -79,6 +75,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         tvOnlineMusic = (TextView) findViewById(R.id.tv_online_music);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         flPlayBar = (FrameLayout) findViewById(R.id.fl_play_bar);
+    }
+
+    private void initViews() {
+        navigationView.addHeaderView(vNavigationHeader);
 
         mLocalMusicFragment = new LocalMusicFragment();
         mSheetListFragment = new SheetListFragment();
@@ -100,7 +100,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onServiceBound() {
         initViews();
-        updateWeather();
         controlPanel = new ControlPanel(flPlayBar);
         naviMenuExecutor = new NaviMenuExecutor(this);
         AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);

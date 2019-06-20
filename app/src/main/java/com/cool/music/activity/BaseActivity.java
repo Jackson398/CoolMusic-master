@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -22,7 +23,10 @@ import android.view.WindowManager;
 
 import com.cool.music.R;
 import com.cool.music.service.PlayService;
+import com.cool.music.storage.Preferences;
 import com.cool.music.utils.PermissionReq;
+
+import java.util.function.Predicate;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection;
@@ -32,10 +36,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if (Preferences.isNightMode()) {
+            setTheme(getDarkTheme());
+        }
         super.onCreate(savedInstanceState);
         setSystemBarTransparent();
         bindService();
         handler = new Handler(Looper.getMainLooper());
+    }
+
+    @StyleRes
+    protected int getDarkTheme() {
+        return R.style.AppThemeDark;
     }
 
     @Override

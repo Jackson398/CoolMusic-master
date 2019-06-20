@@ -253,6 +253,7 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
     }
 
     public void onRestoreInstanceState(final Bundle savedInstanceState) {
+        //todo a bug lvLocalMusic is null
         lvLocalMusic.post(() -> {
             int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
             int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
