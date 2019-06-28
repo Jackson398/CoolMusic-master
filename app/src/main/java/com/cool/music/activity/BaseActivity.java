@@ -22,9 +22,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.cool.music.R;
+import com.cool.music.application.MusicApplication;
 import com.cool.music.service.PlayService;
 import com.cool.music.storage.Preferences;
+import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.PermissionReq;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.function.Predicate;
 
@@ -36,13 +39,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        LoggerUtils.fmtDebug(getClass(), "BaseActivity onCreate.");
         if (Preferences.isNightMode()) {
             setTheme(getDarkTheme());
         }
         super.onCreate(savedInstanceState);
+        RefWatcher refWatcher = MusicApplication.getRefWatcher(this);
+        refWatcher.watch(this);
         setSystemBarTransparent();
-        bindService();
         handler = new Handler(Looper.getMainLooper());
+        bindService();
     }
 
     @StyleRes
@@ -113,6 +119,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void bindService() {
+        LoggerUtils.debug(getClass(), "BaseActivity bindService.");
         Intent intent = new Intent();
         intent.setClass(this, PlayService.class);
         serviceConnection = new PlayServiceConnection();
@@ -152,19 +159,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (serviceConnection != null) {
+            unbindService(serviceConnection);
+        }
+        LoggerUtils.fmtDebug(getClass(), "BaseActivity unbind service.");
         super.onDestroy();
     }
 
     private class PlayServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            LoggerUtils.debug(getClass(), "BaseActivity PlayServiceConnection service connected");
             playService = ((PlayService.PlayBinder) service).getService();
             onServiceBound();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            LoggerUtils.debug(getClass(), "BaseActivity PlayServiceConnection service disconnected.");
         }
 
         @Override

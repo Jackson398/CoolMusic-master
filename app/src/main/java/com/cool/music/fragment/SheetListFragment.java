@@ -17,6 +17,7 @@ import com.cool.music.application.AppCache;
 import com.cool.music.constants.Extras;
 import com.cool.music.constants.Keys;
 import com.cool.music.model.SheetInfo;
+import com.cool.music.utils.LoggerUtils;
 
 import java.util.List;
 
@@ -80,6 +81,7 @@ public class SheetListFragment extends BaseFragment implements AdapterView.OnIte
         int offset = (lvPlaylist.getChildAt(0) == null) ? 0 : lvPlaylist.getChildAt(0).getTop();
         outState.putInt(Keys.PLAYLIST_POSITION, position);
         outState.putInt(Keys.PLAYLIST_OFFSET, offset);
+        LoggerUtils.fmtDebug(getClass(), "sheetListFragment save instance state, position:%s,offset:%s.", position, offset);
         super.onSaveInstanceState(outState);
     }
 

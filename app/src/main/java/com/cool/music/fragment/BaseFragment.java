@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.PermissionReq;
 
 public abstract class BaseFragment extends Fragment {
@@ -14,6 +15,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        LoggerUtils.debug(getClass(), "BaseFragment activity created.");
         super.onActivityCreated(savedInstanceState);
         handler = new Handler(Looper.getMainLooper());
     }

@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:background="@drawable/splash_weather_color"
     tools:context="com.cool.music.activity.SplashWeatherActivity">
+
+    <include
+        layout="@layout/include_app_bar"
+        android:visibility="gone"/>
+
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"

@@ -3,8 +3,10 @@ package com.cool.music.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cool.music.R;
 import com.cool.music.http.HttpCallback;
@@ -46,7 +49,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class WeatherActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class WeatherActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     private String cityName;
     private String adcode;
     private String selectName;
@@ -73,11 +76,6 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
         setContentView(R.layout.activity_weather);
         init();
     }
@@ -129,7 +127,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onSuccess(LiveWeather liveWeather) {
                 if (GET_WEATHER_SUCCESS_STATUS.equals(liveWeather.getInfo()) && GET_WEATHER_MIN_COUNT.equals(liveWeather.getCount())) {
-                    runOnUiThread(()->{
+                    handler.post(() -> {
                         final Lives info = liveWeather.getLives().get(0);
                         tvTemperature.setText(info.getTemperature());
                         tvPosttime.setText(format(info.getReporttime()) + "更新");
@@ -144,7 +142,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     });
                 } else {
-                    runOnUiThread(() -> {
+                    handler.post(() -> {
                         tvTemperature.setText(R.string.service_unavailable);
                         ToastUtils.show(R.string.service_unavailable);
                     });
@@ -153,7 +151,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFail(Exception e) {
-                runOnUiThread(() ->{
+                handler.post(() -> {
                     tvTemperature.setText(R.string.get_weather_info_fail);
                     ToastUtils.show(R.string.get_weather_info_fail);
                 });
@@ -164,7 +162,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onSuccess(TimeWeather timeWeather) {
                 if (GET_WEATHER_SUCCESS_STATUS.equals(timeWeather.getInfo()) && GET_WEATHER_MIN_COUNT.equals(timeWeather.getCount())) {
-                    runOnUiThread(()->{
+                    handler.post(() -> {
                         for (Forecasts forecasts : timeWeather.getForecasts()) {
                             for (Casts casts : forecasts.getCasts()) {
                                 View view = LayoutInflater.from(WeatherActivity.this).inflate(R.layout.weather_item, llWeatherInfo,false);

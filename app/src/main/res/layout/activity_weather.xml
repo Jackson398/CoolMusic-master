@@ -8,6 +8,11 @@
     android:background="@drawable/weather_background_dark"
     android:orientation="vertical"
     tools:context="com.cool.music.activity.WeatherActivity">
+
+    <include
+        layout="@layout/include_app_bar"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/ll_weather_main_header"
         android:layout_width="match_parent"

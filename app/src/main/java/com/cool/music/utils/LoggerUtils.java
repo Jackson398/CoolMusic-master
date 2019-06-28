@@ -2,6 +2,7 @@ package com.cool.music.utils;
 
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.BuildConfig;
@@ -45,6 +46,10 @@ public class LoggerUtils {
         Logger.d(message, clazz);
     }
 
+    public static void debug(final String fmtTag, String message) {
+        Logger.d(message, fmtTag);
+    }
+
     public static void fmtDebug(Class<? extends Object> clazz,String fmtString,Object...value){
         if(StringUtils.isBlank(fmtString)){
             return ;
@@ -53,6 +58,16 @@ public class LoggerUtils {
             fmtString = String.format(fmtString, value);
         }
         debug(clazz, fmtString);
+    }
+
+    public static void fmtDebug(final String fmtTag, String fmtString, Object...value) {
+        if (StringUtils.isBlank(fmtString)) {
+            return;
+        }
+        if (null !=value && value.length != 0) {
+            fmtString = String.format(fmtString, value);
+        }
+        debug(fmtTag, fmtString);
     }
 
     public static void error(Class<? extends Object> clazz ,String message,Exception e){

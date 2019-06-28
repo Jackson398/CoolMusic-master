@@ -1,8 +1,8 @@
 package com.cool.music.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -27,8 +27,7 @@ import com.cool.music.fragment.PlayFragment;
 import com.cool.music.fragment.SheetListFragment;
 import com.cool.music.service.AudioPlayer;
 import com.cool.music.service.QuitTimer;
-import com.cool.music.utils.PermissionReq;
-import com.cool.music.utils.ToastUtils;
+import com.cool.music.utils.LoggerUtils;
 
 
 public class MusicActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -62,6 +61,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LoggerUtils.fmtDebug(getClass(), "MusicActivity onCreate.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
@@ -90,6 +90,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
         ivMenu.setOnClickListener(this);
         ivSearch.setOnClickListener(this);
+
         tvLocalMusic.setOnClickListener(this);
         tvOnlineMusic.setOnClickListener(this);
         mViewPager.addOnPageChangeListener(this);
@@ -99,31 +100,13 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onServiceBound() {
+        LoggerUtils.debug(getClass(), "MusicActivity service bound.");
         initViews();
         controlPanel = new ControlPanel(flPlayBar);
         naviMenuExecutor = new NaviMenuExecutor(this);
         AudioPlayer.getInstance().addOnPlayEventListener(controlPanel);
         QuitTimer.getInstance().setOnTimerListener(this);
         parseIntent();
-    }
-
-    private void updateWeather() {
-        PermissionReq.with(this)
-                .permissions(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION)
-                .result(new PermissionReq.Result() {
-                    @Override
-                    public void onGranted() {
-                        Intent intent = new Intent(MusicActivity.this, SplashWeatherActivity.class);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onDenied() {
-                        ToastUtils.show(R.string.no_permission_location);
-                    }
-                })
-                .request();
     }
 
     @Override
@@ -238,6 +221,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        LoggerUtils.fmtDebug(getClass().getSimpleName(), "restore instance state, mViewPager:%s,mLocalMusicFragment:%s,mSheetListFragment:%s.",
+                mViewPager, mLocalMusicFragment, mSheetListFragment);
         mViewPager.post(() -> {
             mViewPager.setCurrentItem(savedInstanceState.getInt(Keys.VIEW_PAGER_INDEX), false);
             mLocalMusicFragment.onRestoreInstanceState(savedInstanceState);

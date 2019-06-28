@@ -30,6 +30,10 @@
             android:icon="@mipmap/ic_menu_exit"
             android:title="@string/menu_exit" />
         <item
+            android:id="@+id/action_leak_canary"
+            android:icon="@mipmap/ic_menu_exit"
+            android:title="@string/menu_leak_canary"/>
+        <item
             android:id="@+id/action_about"
             android:icon="@mipmap/ic_menu_about"
             android:title="@string/menu_about" />

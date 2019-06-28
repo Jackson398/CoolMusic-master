@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.cool.music.R;
+import com.cool.music.activity.LeakCanaryActivity;
 import com.cool.music.activity.MusicActivity;
 import com.cool.music.activity.SettingActivity;
 import com.cool.music.activity.SplashWeatherActivity;
@@ -13,6 +14,7 @@ import com.cool.music.constants.Actions;
 import com.cool.music.service.PlayService;
 import com.cool.music.service.QuitTimer;
 import com.cool.music.storage.Preferences;
+import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.PermissionReq;
 import com.cool.music.utils.TimerDialog;
 import com.cool.music.utils.ToastUtils;
@@ -47,6 +49,9 @@ public class NaviMenuExecutor {
             case R.id.action_exit:
                 activity.finish();
                 PlayService.startCommand(activity, Actions.ACTION_STOP);
+                return true;
+            case R.id.action_leak_canary:
+                //todo
                 return true;
             case R.id.action_about:
                 //todo

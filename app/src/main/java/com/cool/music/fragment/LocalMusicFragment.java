@@ -39,6 +39,7 @@ import com.cool.music.model.Music;
 import com.cool.music.service.AudioPlayer;
 import com.cool.music.utils.CoverLoader;
 import com.cool.music.utils.FileUtils;
+import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.MusicUtils;
 import com.cool.music.utils.PermissionReq;
 import com.cool.music.utils.ToastUtils;
@@ -58,8 +59,8 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        LoggerUtils.debug(getClass(), "LocalMusicFragment create view.");
         View view = inflater.inflate(R.layout.fragment_local_music, container, false);
-        initViews(view);
         RxBus.getDefault().subscribe(this, new RxBus.Callback<String>() {
             @Override
             public void onEvent(String s) {
@@ -76,8 +77,9 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        LoggerUtils.fmtDebug(getClass(), "LocalMusicFragment activity created.");
         super.onActivityCreated(savedInstanceState);
-
+        initViews(getView());
         adapter = new PlaylistAdapter(AppCache.getInstance().getLocalMusicList());
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
@@ -250,20 +252,22 @@ public class LocalMusicFragment extends BaseFragment implements OnMoreClickListe
         int offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
         outState.putInt(Keys.LOCAL_MUSIC_POSITION, position);
         outState.putInt(Keys.LOCAL_MUSIC_OFFSET, offset);
+        LoggerUtils.fmtDebug(getClass(), "LocalMusicFragment save instance state, position:%s,offset:%s.", position, offset);
     }
 
     public void onRestoreInstanceState(final Bundle savedInstanceState) {
         //todo a bug lvLocalMusic is null
+        int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
+        int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
+        LoggerUtils.fmtDebug(getClass(), "LocalMusicFragment lvLocalMusic:%s,position:%s,offset:%s.", lvLocalMusic, position, offset);
         lvLocalMusic.post(() -> {
-            int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
-            int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
             lvLocalMusic.setSelectionFromTop(position, offset);
         });
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         RxBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

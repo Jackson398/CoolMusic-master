@@ -15,7 +15,7 @@ import com.cool.music.storage.Preferences;
 import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.StringUtils;
 
-public class SplashWeatherActivity extends Activity implements AMapLocationListener{
+public class SplashWeatherActivity extends BaseActivity implements AMapLocationListener{
     public AMapLocationClient mLocationClient = null;
     public AMapLocationClientOption mLocationOption = null;
     public static final String ADCODE = "adcode"; //regional code
