@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.cool.music.R;
 import com.cool.music.activity.BaseActivity;
 import com.cool.music.adapter.PlayPagerAdapter;
+import com.cool.music.application.MusicApplication;
 import com.cool.music.constants.Actions;
 import com.cool.music.enums.PlayModeEnum;
 import com.cool.music.executor.SearchLrc;

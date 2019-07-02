@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.cool.music.application.MusicApplication;
 import com.cool.music.utils.LoggerUtils;
 import com.cool.music.utils.PermissionReq;
 
@@ -39,5 +40,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        MusicApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

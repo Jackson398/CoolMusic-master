@@ -14,6 +14,7 @@ import com.cool.music.R;
 import com.cool.music.activity.OnlineMusicActivity;
 import com.cool.music.adapter.SheetAdapter;
 import com.cool.music.application.AppCache;
+import com.cool.music.application.MusicApplication;
 import com.cool.music.constants.Extras;
 import com.cool.music.constants.Keys;
 import com.cool.music.model.SheetInfo;

@@ -31,6 +31,7 @@ import com.cool.music.R;
 import com.cool.music.activity.MusicInfoActivity;
 import com.cool.music.adapter.PlaylistAdapter;
 import com.cool.music.application.AppCache;
+import com.cool.music.application.MusicApplication;
 import com.cool.music.application.WeChatOpenPlatform;
 import com.cool.music.constants.Keys;
 import com.cool.music.constants.RequestCode;
